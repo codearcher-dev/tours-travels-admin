@@ -1,11 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Edit, Trash2, Plus, Search, X, MapPin } from 'lucide-react';
+import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const mockDestinations = [
-  { id: '1', name: 'Goa', places: ['Baga Beach', 'Fort Aguada'] },
-  { id: '2', name: 'Himachal', places: ['Manali', 'Shimla', 'Kasol'] },
+  { 
+    id: '1', 
+    name: 'Goa', 
+    places: ['Baga Beach', 'Fort Aguada', 'Dudhsagar Falls'],
+    images: ['image1.jpg', 'image2.jpg']
+  },
+  { 
+    id: '2', 
+    name: 'Himachal', 
+    // Testing missing places and images
+    places: [],
+    images: []
+  },
 ];
 
 export default function DestinationsList() {
@@ -37,7 +48,6 @@ export default function DestinationsList() {
         </div>
       </div>
       
-      {/* Filters/Search Bar */}
       <div className="bg-white p-4 rounded-xl shadow-sm ring-1 ring-gray-900/5 flex items-center justify-between">
          <div className="relative w-full max-w-md">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -61,7 +71,8 @@ export default function DestinationsList() {
                   <div className="flex items-center">
                     <div>
                       <div className="font-semibold text-gray-900">{dest.name}</div>
-                      <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.places.length} places</div>
+                      {/* Optional: keep places count here or remove it. I'll keep it as a small hint */}
+                      <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.places?.length || 0} places</div>
                     </div>
                   </div>
                 </td>
@@ -78,39 +89,38 @@ export default function DestinationsList() {
         </table>
       </div>
 
-      {/* Destination Details Modal */}
       {selectedDestination && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
             <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onClick={() => setSelectedDestination(null)} />
             
-            <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-full transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
               
-              <div className="absolute right-0 top-0 pr-4 pt-4">
+              <div className="absolute right-0 top-0 pr-4 pt-4 z-10">
                 <button type="button" onClick={() => setSelectedDestination(null)} className="rounded-md bg-white text-gray-400 hover:text-gray-500 hover:bg-gray-100 p-1 transition-colors">
                   <span className="sr-only">Close</span>
                   <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
 
-              <div className="px-6 py-6 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
-                 <div>
-                   <h3 className="text-2xl font-bold text-gray-900 leading-none">{selectedDestination.name}</h3>
-                   <div className="mt-2 text-xs font-semibold text-gray-500">
-                      Total {selectedDestination.places.length} Places Included
-                   </div>
+              <div className="px-6 py-6 border-b border-gray-100 bg-gray-50/50 flex-shrink-0">
+                 <h3 className="text-2xl font-bold text-gray-900 leading-none pr-8">{selectedDestination.name}</h3>
+                 <div className="mt-2 text-xs font-semibold text-gray-500">
+                    Destination Overview
                  </div>
               </div>
 
-              <div className="px-6 py-6">
-                 <div className="relative mt-2">
-                   <div className="flex items-start gap-2 mb-4">
+              <div className="px-6 py-6 overflow-y-auto space-y-6">
+                 
+                 {/* Places to Visit */}
+                 <div>
+                   <div className="flex items-center gap-2 mb-3">
                       <MapPin className="w-5 h-5 text-orange-500" />
-                      <span className="block text-xs font-bold text-gray-900 uppercase tracking-wide mt-0.5">Key Places to Visit</span>
+                      <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">Key Places to Visit ({selectedDestination.places?.length || 0})</span>
                    </div>
                    
                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
-                      {selectedDestination.places.length > 0 ? (
+                      {selectedDestination.places?.length > 0 ? (
                          <div className="flex flex-wrap gap-2">
                            {selectedDestination.places.map((place, idx) => (
                               <span key={idx} className="bg-white px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 font-medium text-sm shadow-sm">
@@ -119,13 +129,38 @@ export default function DestinationsList() {
                            ))}
                          </div>
                       ) : (
-                         <span className="italic text-gray-400">No places added to this destination yet.</span>
+                         <span className="italic text-gray-400 block p-2">Not provided</span>
                       )}
                    </div>
                  </div>
+
+                 {/* Gallery Info */}
+                 <div>
+                   <div className="flex items-center gap-2 mb-3">
+                      <ImageIcon className="w-5 h-5 text-blue-500" />
+                      <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">Gallery Images ({selectedDestination.images?.length || 0})</span>
+                   </div>
+                   
+                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
+                      {selectedDestination.images?.length > 0 ? (
+                         <div className="flex items-center gap-3">
+                           <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 shadow-sm">
+                              <ImageIcon className="w-6 h-6 text-gray-400" />
+                           </div>
+                           <div>
+                             <span className="font-semibold text-gray-700 block">{selectedDestination.images.length} Image(s) uploaded</span>
+                             <span className="text-xs text-gray-500">Media attached to this destination.</span>
+                           </div>
+                         </div>
+                      ) : (
+                         <span className="italic text-gray-400 block p-2">Not provided</span>
+                      )}
+                   </div>
+                 </div>
+
               </div>
               
-              <div className="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100">
+              <div className="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100 flex-shrink-0">
                  <button type="button" onClick={() => { handleDelete(selectedDestination.id); setSelectedDestination(null); }} className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 transition-colors">
                    <Trash2 className="w-4 h-4" /> Delete
                  </button>
@@ -140,3 +175,4 @@ export default function DestinationsList() {
     </div>
   );
 }
+
