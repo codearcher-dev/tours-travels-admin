@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
+import Gallery from "../../components/Gallery";
 
 export default function DestinationsList() {
     const data = usePackages();
@@ -51,22 +52,27 @@ export default function DestinationsList() {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                            <th className="w-16 py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">S.No.</th>
+                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                 Destination Info
                             </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                        {destinations.map((dest) => (
+                        {destinations.map((dest, i) => (
                             <tr
-                                key={dest.id}
+                                key={dest._id}
                                 onClick={() => setSelectedDestination(dest)}
                                 className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
-                                <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                <td className="w-16 whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                    <div className="flex items-center">
+                                        <div className="text-gray-500 text-sm font-medium">{i + 1}</div>
+                                    </div>
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-5 text-sm">
                                     <div className="flex items-center">
                                         <div>
                                             <div className="font-semibold text-gray-900">{dest.name}</div>
-                                            {/* Optional: keep places count here or remove it. I'll keep it as a small hint */}
                                             <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.places?.length || 0} places</div>
                                         </div>
                                     </div>
@@ -75,7 +81,7 @@ export default function DestinationsList() {
                         ))}
                         {destinations.length === 0 && (
                             <tr>
-                                <td colSpan="1" className="py-12 text-center text-sm text-gray-500">
+                                <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
                                     No destinations found.{" "}
                                     <Link to="/destinations/new" className="text-primary-600 hover:underline">
                                         Create one
@@ -140,61 +146,7 @@ export default function DestinationsList() {
                                 </div>
 
                                 {/* Gallery Info */}
-                                <div>
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <ImageIcon className="w-5 h-5 text-blue-500" />
-                                        <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">
-                                            Gallery Images ({selectedDestination.images?.length || 0})
-                                        </span>
-                                    </div>
-
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
-                                        {selectedDestination.images?.length > 0 ? (
-                                            <div>
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 shadow-sm">
-                                                            <ImageIcon className="w-5 h-5 text-gray-400" />
-                                                        </div>
-                                                        <div>
-                                                            <span className="font-semibold text-gray-700 block">
-                                                                {selectedDestination.images.length} Image(s) uploaded
-                                                            </span>
-                                                            <span className="text-xs text-gray-500">Media attached to this destination.</span>
-                                                        </div>
-                                                    </div>
-                                                    <button 
-                                                        type="button" 
-                                                        onClick={() => setShowGallery(!showGallery)}
-                                                        className="flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors"
-                                                    >
-                                                        {showGallery ? (
-                                                            <>Hide <ChevronUp className="w-4 h-4" /></>
-                                                        ) : (
-                                                            <>View <ChevronDown className="w-4 h-4" /></>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                                
-                                                {showGallery && (
-                                                    <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                                        {selectedDestination.images.map((img, idx) => (
-                                                            <div key={idx} className="relative rounded-lg overflow-hidden ring-1 ring-gray-900/10 aspect-[4/3] bg-gray-200">
-                                                                <img 
-                                                                    src={img.preview || (typeof img === 'string' && img.startsWith('http') ? img : 'https://placehold.co/400x300?text=Image')} 
-                                                                    alt={`Gallery ${idx}`} 
-                                                                    className="w-full h-full object-cover" 
-                                                                />
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <span className="italic text-gray-400 block p-2">Not provided</span>
-                                        )}
-                                    </div>
-                                </div>
+                                <Gallery images={selectedDestination.images} />
                             </div>
 
                             <div className="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100 flex-shrink-0">
@@ -208,7 +160,7 @@ export default function DestinationsList() {
                                     <Trash2 className="w-4 h-4" /> Delete
                                 </button>
                                 <Link
-                                    to={`/destinations/${selectedDestination.id}`}
+                                    to={`/destinations/${selectedDestination._id}`}
                                     className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-primary-50 text-primary-700 px-4 py-2 text-sm font-semibold hover:bg-primary-100 transition-colors">
                                     <Edit className="w-4 h-4" /> Edit
                                 </Link>
@@ -220,3 +172,5 @@ export default function DestinationsList() {
         </div>
     );
 }
+
+

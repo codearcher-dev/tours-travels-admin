@@ -337,7 +337,7 @@ export default function PackagesList() {
 
                                     {/* Gallery Info */}
 
-                                    <Gallery selectedPackage={selectedPackage} />
+                                    <Gallery images={selectedPackage.images} />
                                 </div>
                             </div>
 

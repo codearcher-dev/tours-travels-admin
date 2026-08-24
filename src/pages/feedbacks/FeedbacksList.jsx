@@ -88,8 +88,11 @@ export default function FeedbacksList() {
                                 <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-600 font-medium">
                                     <div className="flex items-center gap-1.5 text-wrap">{fb.package.name}</div>
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                                    <div className="flex items-center gap-1">{renderStars(fb.overallRating)}</div>
+                                <td className="whitespace-nowrap px-3 py-5 text-sm font-semibold text-gray-700">
+                                    <div className="flex items-center gap-1">
+                                        {fb.overallRating}
+                                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -180,3 +183,4 @@ export default function FeedbacksList() {
         </div>
     );
 }
+

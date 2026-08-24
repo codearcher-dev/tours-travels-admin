@@ -1,20 +1,18 @@
 import { ChevronDown, ChevronUp, ImageIcon } from "lucide-react";
 import React, { useState } from "react";
 
-const Gallery = ({ selectedPackage }) => {
+const Gallery = ({ images }) => {
     const [showGallery, setShowGallery] = useState(false);
 
     return (
         <div>
             <div className="flex items-center gap-2 mb-3">
                 <ImageIcon className="w-5 h-5 text-blue-500" />
-                <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">
-                    Gallery Images ({selectedPackage.images?.length || 0})
-                </span>
+                <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">Gallery Images ({images?.length || 0})</span>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
-                {selectedPackage.images?.length > 0 ? (
+                {images?.length > 0 ? (
                     <div>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -22,7 +20,7 @@ const Gallery = ({ selectedPackage }) => {
                                     <ImageIcon className="w-5 h-5 text-gray-400" />
                                 </div>
                                 <div>
-                                    <span className="font-semibold text-gray-700 block">{selectedPackage.images.length} Image(s) uploaded</span>
+                                    <span className="font-semibold text-gray-700 block">{images.length} Image(s) uploaded</span>
                                     <span className="text-xs text-gray-500">Media attached to this package.</span>
                                 </div>
                             </div>
@@ -44,7 +42,7 @@ const Gallery = ({ selectedPackage }) => {
 
                         {showGallery && (
                             <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                {selectedPackage.images.map((img, idx) => {
+                                {images.map((img, idx) => {
                                     return (
                                         <div
                                             key={idx}

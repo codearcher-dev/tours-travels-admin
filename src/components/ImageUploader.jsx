@@ -51,7 +51,7 @@ export default function ImageUploader({ images, onImagesChange }) {
     };
 
     return (
-        <div className="bg-white p-6 sm:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+        <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
             <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
                 <ImageIcon className="w-5 h-5 text-primary-600" />
                 <h2 className="text-lg font-semibold leading-7 text-gray-900">Gallery Images</h2>
