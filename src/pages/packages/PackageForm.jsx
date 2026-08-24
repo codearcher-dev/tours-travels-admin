@@ -126,7 +126,7 @@ export default function PackageForm() {
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* 1. Basic Info Section */}
-                <div className="bg-white p-6 sm:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+                <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
                     <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
                         <Info className="w-5 h-5 text-primary-600" />
                         <h2 className="text-lg font-semibold leading-7 text-gray-900">Basic Information</h2>
@@ -173,7 +173,7 @@ export default function PackageForm() {
                 </div>
 
                 {/* 2. Location, Duration & Pricing */}
-                <div className="bg-white p-6 sm:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+                <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
                     <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
                         <MapPin className="w-5 h-5 text-primary-600" />
                         <h2 className="text-lg font-semibold leading-7 text-gray-900">Logistics & Pricing</h2>
@@ -191,14 +191,14 @@ export default function PackageForm() {
                             />
                         </div>
 
-                        <div className="sm:col-span-6 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div className="sm:col-span-6 bg-gray-50/50 p-3 sm:p-4 rounded-lg border border-gray-100">
                             <div className="flex items-center gap-2 mb-4">
                                 <Clock className="w-4 h-4 text-gray-500" />
                                 <h3 className="text-sm font-semibold text-gray-700">Duration</h3>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500">Days</label>
+                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Days</label>
                                     <input
                                         required
                                         type="number"
@@ -209,7 +209,7 @@ export default function PackageForm() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500">Nights</label>
+                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Nights</label>
                                     <input
                                         required
                                         type="number"
@@ -222,14 +222,14 @@ export default function PackageForm() {
                             </div>
                         </div>
 
-                        <div className="sm:col-span-6 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div className="sm:col-span-6 bg-gray-50/50 p-3 sm:p-4 rounded-lg border border-gray-100">
                             <div className="flex items-center gap-2 mb-4">
                                 <IndianRupee className="w-4 h-4 text-gray-500" />
                                 <h3 className="text-sm font-semibold text-gray-700">Pricing (INR)</h3>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500">Actual Price</label>
+                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Actual Price</label>
                                     <input
                                         required
                                         type="number"
@@ -240,7 +240,7 @@ export default function PackageForm() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500">Discounted Price</label>
+                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Discounted Price</label>
                                     <input
                                         required
                                         type="number"
@@ -257,14 +257,14 @@ export default function PackageForm() {
 
                 {/* 3. Arrays (Destinations, Inclusions, Exclusions) */}
                 <div className="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl overflow-hidden">
-                    <div className="p-6 sm:p-8">
+                    <div className="p-4 sm:p-6 md:p-8">
                         <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
                             <List className="w-5 h-5 text-primary-600" />
                             <h2 className="text-lg font-semibold leading-7 text-gray-900">Additional Details</h2>
                         </div>
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                             {["destinations", "inclusions", "exclusions"].map((category) => (
-                                <div key={category} className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                                <div key={category} className="bg-gray-50 rounded-xl p-3 border border-gray-100 h-full flex flex-col">
                                     <div className="flex items-center justify-between mb-4">
                                         <label className="block text-sm font-bold leading-6 text-gray-800 capitalize">{category}</label>
                                         <button
@@ -274,20 +274,20 @@ export default function PackageForm() {
                                             <Plus className="w-3 h-3 mr-1" /> Add
                                         </button>
                                     </div>
-                                    <div className="space-y-3">
+                                    <div className="space-y-3 flex-1">
                                         {formData[category].map((item, index) => (
-                                            <div key={index} className="flex gap-2 group">
+                                            <div key={index} className="relative flex items-center">
                                                 <input
                                                     type="text"
                                                     placeholder={`Add ${category.slice(0, -1)}`}
                                                     value={item}
                                                     onChange={(e) => handleArrayChange(category, index, e.target.value)}
-                                                    className="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 transition-all"
+                                                    className="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 transition-all"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => removeArrayItem(category, index)}
-                                                    className="text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100">
+                                                    className="absolute right-2 text-gray-400 hover:text-red-600 transition-colors p-1">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -303,7 +303,7 @@ export default function PackageForm() {
                 </div>
 
                 {/* 4. Itinerary */}
-                <div className="bg-white p-6 sm:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
+                <div className="bg-white p-4 sm:p-6 md:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
                     <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
                         <div className="flex items-center gap-2">
                             <MapPin className="w-5 h-5 text-primary-600" />
@@ -317,21 +317,24 @@ export default function PackageForm() {
                         </button>
                     </div>
 
-                    <div className="space-y-8">
+                    <div className="space-y-4 md:space-y-8">
                         {formData.itinerary.map((day, dIdx) => (
                             <div
                                 key={dIdx}
-                                className="bg-gray-50/50 p-6 rounded-xl border border-gray-200 relative group transition-all hover:border-primary-200 hover:shadow-sm">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setFormData((prev) => ({ ...prev, itinerary: prev.itinerary.filter((_, i) => i !== dIdx) }));
-                                    }}
-                                    className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-md transition-colors">
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
+                                className="bg-gray-50/50 p-3 md:p-6 rounded-xl border border-gray-200 relative group transition-all hover:border-primary-200 hover:shadow-sm flex flex-col sm:block">
+                                <div className="flex justify-between items-center mb-2 sm:mb-0">
+                                    <h3 className="text-lg text-primary-600">Day {day.dayNumber}</h3>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setFormData((prev) => ({ ...prev, itinerary: prev.itinerary.filter((_, i) => i !== dIdx) }));
+                                        }}
+                                        className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-md transition-colors">
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
+                                </div>
 
-                                <div className="pr-12">
+                                <div className="">
                                     <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 mb-4">
                                         <div className="sm:col-span-3">
                                             <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide">Day No.</label>
@@ -368,7 +371,7 @@ export default function PackageForm() {
 
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         {/* Meals */}
-                                        <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+                                        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-100 shadow-sm">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <Utensils className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm font-semibold text-gray-800">Included Meals</span>
@@ -391,7 +394,7 @@ export default function PackageForm() {
                                         </div>
 
                                         {/* Activities */}
-                                        <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+                                        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-100 shadow-sm">
                                             <div className="flex justify-between items-center mb-3">
                                                 <div className="flex items-center gap-2">
                                                     <Activity className="w-4 h-4 text-gray-400" />
@@ -404,15 +407,15 @@ export default function PackageForm() {
                                                     <Plus className="w-3 h-3 mr-1" /> Add
                                                 </button>
                                             </div>
-                                            <div className="space-y-3">
+                                            <div className="space-y-3 flex-1">
                                                 {day.activities.map((act, aIdx) => (
                                                     <div
                                                         key={aIdx}
-                                                        className="group relative flex flex-col gap-2 bg-gray-50 p-3 rounded border border-gray-100">
+                                                        className="group relative flex flex-col gap-2 bg-gray-50 p-4 rounded border border-gray-100">
                                                         <button
                                                             type="button"
                                                             onClick={() => removeActivity(dIdx, aIdx)}
-                                                            className="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            className="absolute top-0.5 right-0.5 text-gray-400 hover:text-red-500  transition-colors">
                                                             <X className="w-4 h-4" />
                                                         </button>
                                                         <input

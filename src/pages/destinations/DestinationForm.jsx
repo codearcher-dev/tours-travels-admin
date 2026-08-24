@@ -77,13 +77,26 @@ export default function DestinationForm() {
           </div>
           
           <div className="space-y-3">
-            {formData.places.map((place, index) => (
-              <div key={index} className="flex gap-3 group items-center">
-                <Map className="w-5 h-5 text-gray-400 shrink-0" />
-                <input type="text" required placeholder="e.g., Munnar" value={place} onChange={(e) => handlePlaceChange(index, e.target.value)} className={inputClass.replace('mt-2', '')} />
-                <button type="button" onClick={() => removePlace(index)} className="text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-2"><Trash2 className="w-5 h-5" /></button>
-              </div>
-            ))}
+              {formData.places.map((place, index) => (
+                <div key={index} className="relative flex items-center">
+                  <Map className="w-5 h-5 text-gray-400 shrink-0 absolute left-3" />
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g., Munnar" 
+                    value={place} 
+                    onChange={(e) => handlePlaceChange(index, e.target.value)} 
+                    className={`${inputClass.replace('mt-2', '')} pl-10 pr-10`} 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removePlace(index)} 
+                    className="absolute right-2 text-gray-400 hover:text-red-600 transition-colors p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
             {formData.places.length === 0 && (
                <div className="text-center py-6 bg-gray-50 border border-dashed border-gray-200 rounded-lg">
                  <p className="text-sm text-gray-500">No places added yet.</p>
