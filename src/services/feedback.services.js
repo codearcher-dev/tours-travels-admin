@@ -1,7 +1,7 @@
 import api from "../config/axios.config";
 
 export const getFeedbacks = async () => {
-    const res = await api.get("/feedbacks");
+    const res = await api.get("/feedback");
     return res.data;
 }
 
