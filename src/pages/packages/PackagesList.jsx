@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
+import { formatDateAndTime } from "../../utils/date";
 
 export default function PackagesList() {
     const data = usePackages();
@@ -129,8 +130,9 @@ export default function PackagesList() {
 
                             <div className="px-6 py-6 border-b border-gray-100 bg-gray-50/50 flex-shrink-0">
                                 <h3 className="text-2xl font-bold text-gray-900 leading-none pr-8">{selectedPackage.name}</h3>
-                                <div className="flex items-center gap-3 mt-2 text-xs font-semibold text-gray-500">
-                                    <span className="flex items-center gap-1">{new Date().toDateString(selectedPackage.createdAt)}</span>
+                                <div className="flex flex-col justify-center mt-2 text-xs font-semibold text-gray-500">
+                                    <span className="flex items-center gap-1">Created : {formatDateAndTime(selectedPackage.createdAt)}</span>
+                                    <span className="flex items-center gap-1">Last updated : {formatDateAndTime(selectedPackage.updatedAt)}</span>
                                 </div>
                             </div>
 
