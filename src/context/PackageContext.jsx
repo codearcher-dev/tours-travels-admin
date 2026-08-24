@@ -17,7 +17,7 @@ export const PackageProvider = ({ children }) => {
         try {
             const packagesData = await getAllPackages();
             const destinationData = await getDestinations();
-            console.log(packages);
+            console.log(packagesData);
 
             setPackages(packagesData.packages);
             setDestinations(destinationData.destinations);
