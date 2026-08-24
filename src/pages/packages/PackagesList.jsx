@@ -18,10 +18,14 @@ import {
     Utensils,
     Activity,
     Image as ImageIcon,
+    ChevronDown,
+    ChevronUp,
 } from "lucide-react";
+
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
 import { formatDateAndTime } from "../../utils/date";
+import Gallery from "../../components/Gallery";
 
 export default function PackagesList() {
     const data = usePackages();
@@ -78,7 +82,7 @@ export default function PackagesList() {
                     <tbody className="divide-y divide-gray-100 bg-white">
                         {packages.map((pkg) => (
                             <tr
-                                key={pkg.id}
+                                key={pkg._id}
                                 onClick={() => setSelectedPackage(pkg)}
                                 className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
                                 <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
@@ -332,32 +336,8 @@ export default function PackagesList() {
                                     </div>
 
                                     {/* Gallery Info */}
-                                    <div>
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <ImageIcon className="w-5 h-5 text-blue-500" />
-                                            <span className="block text-sm font-bold text-gray-900 uppercase tracking-wide mt-0.5">
-                                                Gallery Images ({selectedPackage.images?.length || 0})
-                                            </span>
-                                        </div>
 
-                                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
-                                            {selectedPackage.images?.length > 0 ? (
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 shadow-sm">
-                                                        <ImageIcon className="w-6 h-6 text-gray-400" />
-                                                    </div>
-                                                    <div>
-                                                        <span className="font-semibold text-gray-700 block">
-                                                            {selectedPackage.images.length} Image(s) uploaded
-                                                        </span>
-                                                        <span className="text-xs text-gray-500">Media attached to this package.</span>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <span className="italic text-gray-400 block p-2">Not provided</span>
-                                            )}
-                                        </div>
-                                    </div>
+                                    <Gallery selectedPackage={selectedPackage} />
                                 </div>
                             </div>
 

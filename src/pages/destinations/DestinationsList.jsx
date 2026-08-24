@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon } from "lucide-react";
+import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
 
@@ -8,6 +8,7 @@ export default function DestinationsList() {
     const data = usePackages();
     const [destinations, setDestinations] = useState(data.destinations);
     const [selectedDestination, setSelectedDestination] = useState(null);
+    const [showGallery, setShowGallery] = useState(false);
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this destination?")) {
@@ -149,16 +150,45 @@ export default function DestinationsList() {
 
                                     <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-800">
                                         {selectedDestination.images?.length > 0 ? (
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 shadow-sm">
-                                                    <ImageIcon className="w-6 h-6 text-gray-400" />
+                                            <div>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-300 shadow-sm">
+                                                            <ImageIcon className="w-5 h-5 text-gray-400" />
+                                                        </div>
+                                                        <div>
+                                                            <span className="font-semibold text-gray-700 block">
+                                                                {selectedDestination.images.length} Image(s) uploaded
+                                                            </span>
+                                                            <span className="text-xs text-gray-500">Media attached to this destination.</span>
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => setShowGallery(!showGallery)}
+                                                        className="flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors"
+                                                    >
+                                                        {showGallery ? (
+                                                            <>Hide <ChevronUp className="w-4 h-4" /></>
+                                                        ) : (
+                                                            <>View <ChevronDown className="w-4 h-4" /></>
+                                                        )}
+                                                    </button>
                                                 </div>
-                                                <div>
-                                                    <span className="font-semibold text-gray-700 block">
-                                                        {selectedDestination.images.length} Image(s) uploaded
-                                                    </span>
-                                                    <span className="text-xs text-gray-500">Media attached to this destination.</span>
-                                                </div>
+                                                
+                                                {showGallery && (
+                                                    <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                                        {selectedDestination.images.map((img, idx) => (
+                                                            <div key={idx} className="relative rounded-lg overflow-hidden ring-1 ring-gray-900/10 aspect-[4/3] bg-gray-200">
+                                                                <img 
+                                                                    src={img.preview || (typeof img === 'string' && img.startsWith('http') ? img : 'https://placehold.co/400x300?text=Image')} 
+                                                                    alt={`Gallery ${idx}`} 
+                                                                    className="w-full h-full object-cover" 
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         ) : (
                                             <span className="italic text-gray-400 block p-2">Not provided</span>
