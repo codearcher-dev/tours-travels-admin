@@ -35,7 +35,7 @@ function App() {
                     <Route path="packages">
                         <Route index element={<PackagesList />} />
                         <Route path="new" element={<PackageForm />} />
-                        <Route path=":id" element={<PackageForm />} />
+                        <Route path=":slug" element={<PackageForm />} />
                     </Route>
 
                     <Route path="destinations">

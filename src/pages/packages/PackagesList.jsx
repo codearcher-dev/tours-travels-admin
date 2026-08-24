@@ -345,14 +345,14 @@ export default function PackagesList() {
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        handleDelete(selectedPackage.id);
+                                        handleDelete(selectedPackage._id);
                                         setSelectedPackage(null);
                                     }}
                                     className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 transition-colors">
                                     <Trash2 className="w-4 h-4" /> Delete
                                 </button>
                                 <Link
-                                    to={`/packages/${selectedPackage.id}`}
+                                    to={`/packages/${selectedPackage.slug}`}
                                     className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-primary-50 text-primary-700 px-4 py-2 text-sm font-semibold hover:bg-primary-100 transition-colors">
                                     <Edit className="w-4 h-4" /> Edit
                                 </Link>
