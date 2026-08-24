@@ -127,30 +127,42 @@ export default function FeedbacksList() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 leading-none">{selectedFeedback.name}</h3>
-                                    <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-500 font-medium">
-                                        <span className="flex items-center gap-1">
-                                            <PackageIcon className="w-3.5 h-3.5" /> {selectedFeedback.package.name}
+                                    <div className="flex items-center justify-between gap-3 mt-1.5 text-xs text-gray-500 font-medium">
+                                        <span className="flex gap-1">
+                                            <PackageIcon className="w-4 h-4" /> {selectedFeedback.package.name}
                                         </span>
-                                        <span className="flex items-center gap-1">
-                                            <Calendar className="w-3.5 h-3.5" /> {formatDateAndTime(selectedFeedback.createdAt)}
+                                        <span className="flex gap-1 w-32">
+                                            <Calendar className="w-4 h-4" /> {formatDateAndTime(selectedFeedback.createdAt)}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="px-6 py-8">
+                            <div className="px-6 py-4">
                                 <div className="mb-6 flex items-center justify-between bg-yellow-50 p-4 rounded-xl border border-yellow-100">
                                     <span className="text-sm font-bold text-yellow-800">Overall Rating</span>
                                     <div className="flex gap-1">{renderStars(selectedFeedback.overallRating)}</div>
                                 </div>
-
                                 <div className="relative">
                                     <MessageSquareHeart className="w-8 h-8 text-gray-200 absolute -top-4 -left-2" />
                                     <div className="relative z-10 pl-6 border-l-2 border-gray-200">
                                         <span className="block text-sm font-bold text-gray-900 mb-2">Customer Review</span>
                                         <p className="text-base text-gray-700 leading-relaxed italic">"{selectedFeedback.review}"</p>
                                     </div>
-                                </div>
+                                </div>{" "}
+                                {selectedFeedback.feedback && selectedFeedback.feedback.length > 0 && (
+                                    <div className="mt-4 border-t border-gray-100 pt-4">
+                                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Feedback</h4>
+                                        <div className="space-y-4">
+                                            {selectedFeedback.feedback.map((qr, idx) => (
+                                                <div key={idx} className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
+                                                    <p className="text-sm font-semibold text-gray-800 mb-2">{qr.question}</p>
+                                                    {qr.rating && <div className="flex items-center gap-1 mb-2">{renderStars(qr.rating)}</div>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="bg-gray-50 px-6 py-4 flex flex-row-reverse border-t border-gray-100">
