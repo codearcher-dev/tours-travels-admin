@@ -1,13 +1,21 @@
 import { useState } from 'react';
-import { X, Search, Package as PackageIcon, Calendar, User, Mail, Phone, Users, MessageSquare } from 'lucide-react';
+import { X, Search, Package as PackageIcon, Calendar, User, Mail, Phone, Users, MessageSquare, CheckCircle2, MessageCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const mockEnquiries = [
-  { id: '1', name: 'Alice Walker', email: 'alice@example.com', phone: '+91 9876543210', package: 'Goa Holiday', adults: 2, kids: 1, message: 'Looking for a sea-facing hotel.', date: '2023-10-10' },
-  { id: '2', name: 'Bob Marley', email: 'bob@example.com', phone: '+91 8765432109', package: 'Kashmir Paradise', adults: 4, kids: 0, message: '', date: '2023-10-11' },
+  { id: '1', name: 'Alice Walker', email: 'alice@example.com', phone: '+91 9876543210', package: 'Goa Holiday', adults: 2, kids: 1, message: 'Looking for a sea-facing hotel.', date: '2023-10-10', status: 'pending' },
+  { id: '2', name: 'Bob Marley', email: 'bob@example.com', phone: '+91 8765432109', package: 'Kashmir Paradise', adults: 4, kids: 0, message: '', date: '2023-10-11', status: 'completed' },
 ];
 
 export default function EnquiriesList() {
+  const [enquiries, setEnquiries] = useState(mockEnquiries);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+
+  const handleComplete = (id) => {
+    setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: 'completed' } : e));
+    setSelectedEnquiry(prev => ({ ...prev, status: 'completed' }));
+    toast.success("Enquiry marked as served!");
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -29,48 +37,47 @@ export default function EnquiriesList() {
       </div>
 
       <div className="mt-6 overflow-hidden shadow-sm ring-1 ring-gray-900/5 rounded-xl bg-white">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50/50">
-                  <tr>
-                    <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">Customer Details</th>
-                    <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Interested Package</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
-                  {mockEnquiries.map((enq) => (
-                    <tr key={enq.id} onClick={() => setSelectedEnquiry(enq)} className="cursor-pointer hover:bg-gray-50/80 transition-colors group">
-                      <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="flex items-center">
-                          <div>
-                            <div className="font-semibold text-gray-900">{enq.name}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-600 font-medium">
-                        <div className="flex items-center gap-1.5">
-                           {enq.package}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {mockEnquiries.length === 0 && (
-                     <tr>
-                        <td colSpan="3" className="py-12 text-center text-sm text-gray-500">
-                           No enquiries found.
-                        </td>
-                     </tr>
-                  )}
-                </tbody>
-              </table>
-              </div>
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50/50">
+            <tr>
+              <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">Customer Details</th>
+              <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Interested Package</th>
+              <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 bg-white">
+            {enquiries.map((enq) => (
+              <tr key={enq.id} onClick={() => setSelectedEnquiry(enq)} className="cursor-pointer hover:bg-gray-50/80 transition-colors group">
+                <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                  <div className="flex items-center">
+                    <div>
+                      <div className="font-semibold text-gray-900">{enq.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-600 font-medium">
+                  <div className="flex items-center gap-1.5">
+                     <PackageIcon className="w-4 h-4 text-primary-500" /> {enq.package}
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-3 py-5 text-sm">
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${enq.status === 'completed' ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-orange-50 text-orange-700 ring-orange-600/20'}`}>
+                    {enq.status === 'completed' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>}
+                    {enq.status === 'completed' ? 'Served' : 'Pending'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Modern Modal */}
       {selectedEnquiry && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
             <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onClick={() => setSelectedEnquiry(null)} />
             
-            <div className="relative w-full transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-full transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-xl animate-in fade-in zoom-in-95 duration-200">
               
               <div className="absolute right-0 top-0 pr-4 pt-4">
                 <button type="button" onClick={() => setSelectedEnquiry(null)} className="rounded-md bg-white text-gray-400 hover:text-gray-500 hover:bg-gray-100 p-1 transition-colors">
@@ -79,16 +86,23 @@ export default function EnquiriesList() {
                 </button>
               </div>
 
-              <div className="px-6 py-6 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
-                 <div className="h-14 w-14 flex-shrink-0 rounded-full bg-primary-100 flex items-center justify-center border border-primary-200 text-primary-700 font-bold text-2xl">
-                   {selectedEnquiry.name.charAt(0)}
+              <div className="px-6 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                 <div className="flex items-center gap-3">
+                   <div className="h-14 w-14 flex-shrink-0 rounded-full bg-primary-100 flex items-center justify-center border border-primary-200 text-primary-700 font-bold text-2xl">
+                     {selectedEnquiry.name.charAt(0)}
+                   </div>
+                   <div>
+                     <h3 className="text-xl font-bold text-gray-900 leading-none">{selectedEnquiry.name}</h3>
+                     <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full border border-primary-100">
+                        <PackageIcon className="w-3.5 h-3.5" /> Interested in {selectedEnquiry.package}
+                     </span>
+                   </div>
                  </div>
-                 <div>
-                   <h3 className="text-xl font-bold text-gray-900 leading-none">{selectedEnquiry.name}</h3>
-                   <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full border border-primary-100">
-                      <PackageIcon className="w-3.5 h-3.5" /> Interested in {selectedEnquiry.package}
-                   </span>
-                 </div>
+                 
+                 <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset ${selectedEnquiry.status === 'completed' ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-orange-50 text-orange-700 ring-orange-600/20'}`}>
+                    {selectedEnquiry.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <span className="relative flex h-2 w-2 mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span></span>}
+                    {selectedEnquiry.status === 'completed' ? 'Served' : 'Pending'}
+                 </span>
               </div>
 
               <div className="px-6 py-6">
@@ -106,6 +120,16 @@ export default function EnquiriesList() {
                        <div>
                          <span className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Phone Number</span>
                          <span className="block text-sm font-medium text-gray-900">{selectedEnquiry.phone || 'Not provided'}</span>
+                         {selectedEnquiry.phone && (
+                           <a 
+                             href={`https://wa.me/${selectedEnquiry.phone.replace(/[^0-9]/g, '')}`} 
+                             target="_blank" 
+                             rel="noopener noreferrer"
+                             className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-100 hover:bg-green-200 px-3 py-1.5 rounded-lg transition-colors"
+                           >
+                             <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Message
+                           </a>
+                         )}
                        </div>
                     </div>
 
@@ -137,10 +161,15 @@ export default function EnquiriesList() {
                  </div>
               </div>
               
-              <div className="bg-gray-50 px-6 py-4 flex flex-row-reverse border-t border-gray-100">
-                <button type="button" onClick={() => setSelectedEnquiry(null)} className="inline-flex w-full justify-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 sm:w-auto transition-colors">
-                  Close Details
+              <div className="bg-gray-50 px-6 py-4 flex items-center justify-end border-t border-gray-100 gap-3">
+                <button type="button" onClick={() => setSelectedEnquiry(null)} className="inline-flex justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 transition-colors">
+                  Close
                 </button>
+                {selectedEnquiry.status === 'pending' && (
+                  <button type="button" onClick={() => handleComplete(selectedEnquiry.id)} className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition-colors">
+                    <CheckCircle2 className="w-4 h-4" /> Mark as Served
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -149,10 +178,3 @@ export default function EnquiriesList() {
     </div>
   );
 }
-
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ImageUploader from '../../components/ImageUploader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Trash2, X, Upload, IndianRupee, Clock, MapPin, List, Info, Utensils, Activity, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -309,28 +310,7 @@ export default function PackageForm() {
           </div>
         </div>
         
-        {/* 5. Images Upload */}
-        <div className="bg-white p-6 sm:p-8 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
-           <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
-             <ImageIcon className="w-5 h-5 text-primary-600" />
-             <h2 className="text-lg font-semibold leading-7 text-gray-900">Media</h2>
-           </div>
-           <div className="mt-2 flex justify-center rounded-xl border-2 border-dashed border-gray-300 px-6 py-12 hover:border-primary-400 hover:bg-primary-50/50 transition-all cursor-pointer group">
-              <div className="text-center">
-                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-sm ring-1 ring-gray-900/5 group-hover:scale-110 transition-transform">
-                  <Upload className="h-6 w-6 text-primary-500" aria-hidden="true" />
-                </div>
-                <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
-                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-semibold text-primary-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-600 focus-within:ring-offset-2 hover:text-primary-500">
-                    <span>Click to upload images</span>
-                    <input id="file-upload" name="file-upload" type="file" multiple className="sr-only" />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
-                <p className="text-xs leading-5 text-gray-500 mt-2">PNG, JPG, WEBP up to 10MB (Multiple allowed)</p>
-              </div>
-           </div>
-        </div>
+                <ImageUploader images={formData.images} onImagesChange={(images) => setFormData(prev => ({...prev, images}))} />
 
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-x-4 pt-4">
@@ -345,3 +325,5 @@ export default function PackageForm() {
     </div>
   );
 }
+
+
