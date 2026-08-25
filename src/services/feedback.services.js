@@ -6,6 +6,6 @@ export const getFeedbacks = async () => {
 }
 
 export const deleteFeedback = async (id) => {
-    const res = await api.delete(id);
+    const res = await api.delete(`/feedback/${id}`);
     return res.data;
 }
