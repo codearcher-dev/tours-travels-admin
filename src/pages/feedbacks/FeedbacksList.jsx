@@ -130,11 +130,12 @@ export default function FeedbacksList() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 leading-none">{selectedFeedback.name}</h3>
-                                    <div className="flex items-center justify-between gap-3 mt-1.5 text-xs text-gray-500 font-medium">
+                                    <div className="flex flex-col gap-1.5 mt-2 text-xs text-gray-500 font-medium">
                                         <span className="flex gap-1">
-                                            <PackageIcon className="w-4 h-4" /> {selectedFeedback.package.name}
+                                            <PackageIcon className="w-4 h-4" />
+                                            <span>{selectedFeedback.package.name}</span>
                                         </span>
-                                        <span className="flex gap-1 w-32">
+                                        <span className="flex items-center gap-1">
                                             <Calendar className="w-4 h-4" /> {formatDateAndTime(selectedFeedback.createdAt)}
                                         </span>
                                     </div>

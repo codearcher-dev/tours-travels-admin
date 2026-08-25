@@ -6,11 +6,11 @@ import { PackageProvider } from "./context/PackageContext.jsx";
 import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <BrowserRouter>
-            <PackageProvider>
-                <App />
-            </PackageProvider>
-        </BrowserRouter>
-    </StrictMode>,
+    // <StrictMode>
+    <BrowserRouter>
+        <PackageProvider>
+            <App />
+        </PackageProvider>
+    </BrowserRouter>,
+    // </StrictMode>,
 );
