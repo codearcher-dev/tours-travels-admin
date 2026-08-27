@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp } from "lucide-react";
+import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp, Delete } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import { deleteDestination } from "../../services/destination.services";
+import { ClipLoader } from "react-spinners";
 
 export default function DestinationsList() {
     const data = usePackages();
@@ -12,14 +14,23 @@ export default function DestinationsList() {
     const [selectedDestination, setSelectedDestination] = useState(null);
     const [showGallery, setShowGallery] = useState(false);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
+    const [loading, setLoading] = useState(false);
 
-    const handleConfirmDelete = () => {
-        if (confirmDialog.id) {
-            setDestinations(destinations.filter((d) => d._id !== confirmDialog.id && d.id !== confirmDialog.id));
-            toast.success("Destination deleted successfully");
+    const handleConfirmDelete = async () => {
+        const id = confirmDialog.id;
+        setLoading(true);
+        try {
+            await deleteDestination(id);
+            const newDestinations = destinations.filter((d) => d._id !== id);
+            setDestinations(newDestinations);
             setSelectedDestination(null);
+            toast.success("Destination deleted successfully");
+        } catch (error) {
+            toast.error("Failed to delete Destination");
+        } finally {
+            setConfirmDialog({ isOpen: false, id: null });
+            setLoading(false);
         }
-        setConfirmDialog({ isOpen: false, id: null });
     };
 
     return (
@@ -56,10 +67,10 @@ export default function DestinationsList() {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="w-16 py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">S.No.</th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                                Destination Info
+                            <th className="w-16 py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                                S.No.
                             </th>
+                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Destination Info</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
@@ -173,13 +184,13 @@ export default function DestinationsList() {
 
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}
+                confirmText={loading ? "Deleting" : "Delete"}
                 title="Delete Destination"
                 message="Are you sure you want to delete this destination? This action cannot be undone."
                 onConfirm={handleConfirmDelete}
+                confirmed={loading}
                 onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
             />
         </div>
     );
 }
-
-

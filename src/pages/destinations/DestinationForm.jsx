@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2, Upload, MapPin, Map, Image as ImageIcon, Info } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
+import { createDestination, updateDestination } from "../../services/destination.services";
+import { ClipLoader } from "react-spinners";
 
 export default function DestinationForm() {
     const { id } = useParams();
@@ -21,6 +23,8 @@ export default function DestinationForm() {
         },
     );
 
+    const [removedImagesPublicIds, setRemovedImagesPublicIds] = useState([]);
+    const [loading, setLoading] = useState(false);
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
@@ -40,10 +44,28 @@ export default function DestinationForm() {
         setFormData((prev) => ({ ...prev, places: newPlaces }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        toast.success(isEdit ? "Destination updated!" : "Destination created!");
-        navigate("/destinations");
+        setLoading(true);
+        const data = new FormData();
+
+        for (let i = 0; i < formData.images.length; i++) {
+            data.append("images", formData.images[i]);
+        }
+
+        data.append("data", JSON.stringify(formData));
+        data.append("public_id", removedImagesPublicIds);
+        console.log(data);
+
+        try {
+            const res = isEdit ? await updateDestination(destination._id, data) : await createDestination(data);
+            toast.success(isEdit ? "Destination updated!" : "Destination created!");
+            navigate("/destinations");
+        } catch (error) {
+            console.error(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const inputClass =
@@ -123,7 +145,11 @@ export default function DestinationForm() {
                     </div>
                 </div>
 
-                <ImageUploader images={formData.images} onImagesChange={(images) => setFormData((prev) => ({ ...prev, images }))} />
+                <ImageUploader
+                    setRemovedImagePublicIds={setRemovedImagesPublicIds}
+                    images={formData.images}
+                    onImagesChange={(images) => setFormData((prev) => ({ ...prev, images }))}
+                />
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-x-4 pt-4">
@@ -136,7 +162,23 @@ export default function DestinationForm() {
                     <button
                         type="submit"
                         className="rounded-lg bg-primary-600 px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
-                        {isEdit ? "Save Changes" : "Create Destination"}
+                        {isEdit ? (
+                            loading ? (
+                                <div className="flex items-center gap-2">
+                                    <span>Updating Destination</span>{" "}
+                                    <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                </div>
+                            ) : (
+                                "Save Changes"
+                            )
+                        ) : loading ? (
+                            <div className="flex items-center gap-2">
+                                <span>Creating Destination</span>{" "}
+                                <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                            </div>
+                        ) : (
+                            "Create Package"
+                        )}
                     </button>
                 </div>
             </form>

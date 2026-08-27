@@ -34,9 +34,11 @@ export default function PackagesList() {
     const [packages, setPackages] = useState(data.packages);
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
+    const [loading, setLoading] = useState(false);
 
     const handleConfirmDelete = async () => {
         const id = confirmDialog.id;
+        setLoading(true);
         try {
             await deletePackage(id);
             const newPackages = packages.filter((p) => p._id !== id);
@@ -47,6 +49,7 @@ export default function PackagesList() {
             toast.error("Failed to delete package");
         } finally {
             setConfirmDialog({ isOpen: false, id: null });
+            setLoading(false);
         }
     };
 
@@ -373,6 +376,8 @@ export default function PackagesList() {
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}
                 title="Delete Package"
+                confirmText={loading ? "Deleting" : "Delete"}
+                confirmed={loading}
                 message="Are you sure you want to delete this package? This action cannot be undone."
                 onConfirm={handleConfirmDelete}
                 onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
