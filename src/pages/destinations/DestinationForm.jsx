@@ -3,7 +3,7 @@ import ImageUploader from "../../components/ImageUploader";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2, Upload, MapPin, Map, Image as ImageIcon, Info } from "lucide-react";
 import toast from "react-hot-toast";
-import { usePackages } from "../../context/PackageContext";
+import { useData } from "../../context/PackageContext";
 import { createDestination, updateDestination } from "../../services/destination.services";
 import { ClipLoader } from "react-spinners";
 
@@ -11,7 +11,7 @@ export default function DestinationForm() {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = Boolean(id);
-    const { destinations } = usePackages();
+    const { destinations } = useData();
 
     const destination = destinations.find((d) => d._id === id);
 

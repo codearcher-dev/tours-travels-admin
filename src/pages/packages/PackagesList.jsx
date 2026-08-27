@@ -23,15 +23,15 @@ import {
 } from "lucide-react";
 
 import toast from "react-hot-toast";
-import { usePackages } from "../../context/PackageContext";
+import { useData } from "../../context/PackageContext";
 import { formatDateAndTime } from "../../utils/date";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { deletePackage } from "../../services/packages.services";
 
 export default function PackagesList() {
-    const data = usePackages();
-    const { loading } = usePackages();
+    const data = useData();
+    const { loading } = useData();
     const [packages, setPackages] = useState([]);
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });

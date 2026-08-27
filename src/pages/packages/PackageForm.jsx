@@ -3,7 +3,7 @@ import ImageUploader from "../../components/ImageUploader";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2, X, Upload, IndianRupee, Clock, MapPin, List, Info, Utensils, Activity, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { usePackages } from "../../context/PackageContext";
+import { useData } from "../../context/PackageContext";
 import { createPackage, updatePackage } from "../../services/packages.services";
 import { ClipLoader } from "react-spinners";
 
@@ -12,7 +12,7 @@ export default function PackageForm() {
     const navigate = useNavigate();
     const isEdit = Boolean(slug);
 
-    const { packages } = usePackages();
+    const { packages } = useData();
     const [loading, setLoading] = useState(false);
 
     console.log("slug : ", slug);

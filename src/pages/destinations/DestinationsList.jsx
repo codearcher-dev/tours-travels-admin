@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp, Delete } from "lucide-react";
 import toast from "react-hot-toast";
-import { usePackages } from "../../context/PackageContext";
+import { useData } from "../../context/PackageContext";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { deleteDestination } from "../../services/destination.services";
 import { ClipLoader } from "react-spinners";
 
 export default function DestinationsList() {
-    const data = usePackages();
+    const data = useData();
     const [destinations, setDestinations] = useState([]);
     const [selectedDestination, setSelectedDestination] = useState(null);
     const [showGallery, setShowGallery] = useState(false);

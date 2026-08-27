@@ -33,4 +33,4 @@ export const PackageProvider = ({ children }) => {
     return <PackageContext.Provider value={{ packages, destinations, loading, error, retry: fetch }}>{children}</PackageContext.Provider>;
 };
 
-export const usePackages = () => useContext(PackageContext);
+export const useData = () => useContext(PackageContext);
