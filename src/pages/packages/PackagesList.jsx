@@ -26,16 +26,27 @@ import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
 import { formatDateAndTime } from "../../utils/date";
 import Gallery from "../../components/Gallery";
+import ConfirmDialog from "../../components/ConfirmDialog";
+import { deletePackage } from "../../services/packages.services";
 
 export default function PackagesList() {
     const data = usePackages();
     const [packages, setPackages] = useState(data.packages);
     const [selectedPackage, setSelectedPackage] = useState(null);
+    const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this package?")) {
-            setPackages(packages.filter((p) => p.id !== id));
+    const handleConfirmDelete = async () => {
+        const id = confirmDialog.id;
+        try {
+            await deletePackage(id);
+            const newPackages = packages.filter((p) => p._id !== id);
+            setPackages(newPackages);
+            setSelectedPackage(null);
             toast.success("Package deleted successfully");
+        } catch (error) {
+            toast.error("Failed to delete package");
+        } finally {
+            setConfirmDialog({ isOpen: false, id: null });
         }
     };
 
@@ -344,10 +355,7 @@ export default function PackagesList() {
                             <div className="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100 flex-shrink-0">
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        handleDelete(selectedPackage._id);
-                                        setSelectedPackage(null);
-                                    }}
+                                    onClick={() => setConfirmDialog({ isOpen: true, id: selectedPackage._id || selectedPackage.id })}
                                     className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 transition-colors">
                                     <Trash2 className="w-4 h-4" /> Delete
                                 </button>
@@ -361,6 +369,14 @@ export default function PackagesList() {
                     </div>
                 </div>
             )}
+
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                title="Delete Package"
+                message="Are you sure you want to delete this package? This action cannot be undone."
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+            />
         </div>
     );
 }

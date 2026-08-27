@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 
-export default function ImageUploader({ images, onImagesChange }) {
+export default function ImageUploader({ images, onImagesChange, setRemovedImagePublicIds }) {
     const [dragActive, setDragActive] = useState(false);
     const inputRef = useRef(null);
 
@@ -31,21 +31,40 @@ export default function ImageUploader({ images, onImagesChange }) {
         }
     };
 
-    const handleFiles = (files) => {
-        const newImages = Array.from(files).map((file) => ({
-            file,
-            name: file.name,
-            preview: URL.createObjectURL(file),
-        }));
-        onImagesChange([...images, ...newImages]);
+    const [previews, setPreviews] = useState([]);
 
+    useEffect(() => {
+        const newPreviews = images.map((img) => {
+            if (img instanceof File) {
+                return URL.createObjectURL(img);
+            } else if (img && img.url) {
+                return img.url;
+            } else if (typeof img === "string") {
+                return img;
+            }
+            return null;
+        });
+        setPreviews(newPreviews);
+        return () => {
+            newPreviews.forEach((url) => {
+                if (url && url.startsWith("blob:")) {
+                    URL.revokeObjectURL(url);
+                }
+            });
+        };
+    }, [images]);
+
+    const handleFiles = (files) => {
+        const newFiles = Array.from(files);
+        onImagesChange([...images, ...newFiles]);
+        console.log(typeof newFiles[0]);
         // Clear input so selecting the same file again works
         if (inputRef.current) inputRef.current.value = "";
     };
 
     const removeImage = (index) => {
         const newImages = [...images];
-        URL.revokeObjectURL(newImages[index].preview);
+        setRemovedImagePublicIds((prev) => (images[index]?.publicId ? [...prev, images[index].publicId] : prev));
         newImages.splice(index, 1);
         onImagesChange(newImages);
     };
@@ -82,15 +101,15 @@ export default function ImageUploader({ images, onImagesChange }) {
                 <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                     {images.map((img, index) => (
                         <div key={index} className="relative group rounded-lg overflow-hidden ring-1 ring-gray-900/10 aspect-[4/3] bg-gray-100">
-                            <img src={img.url || img.preview} alt={`Preview ${index}`} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gray-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <img src={previews[index]} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 transition-colors flex items-start justify-end">
                                 <button
                                     type="button"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         removeImage(index);
                                     }}
-                                    className="bg-white text-red-600 p-2 rounded-full hover:bg-red-50 hover:scale-110 transition-all shadow-sm"
+                                    className="bg-white text-black p-1.5 rounded-full hover:bg-red-50 transition-all"
                                     title="Remove image">
                                     <X className="w-4 h-4" />
                                 </button>

@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2, X, Upload, IndianRupee, Clock, MapPin, List, Info, Utensils, Activity, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { usePackages } from "../../context/PackageContext";
+import { createPackage, updatePackage } from "../../services/packages.services";
+import { ClipLoader } from "react-spinners";
 
 export default function PackageForm() {
     const { slug } = useParams();
@@ -11,9 +13,11 @@ export default function PackageForm() {
     const isEdit = Boolean(slug);
 
     const { packages } = usePackages();
+    const [loading, setLoading] = useState(false);
 
     console.log("slug : ", slug);
     const pkg = packages.find((p) => p.slug === slug);
+    const [removedImagePublicIds, setRemovedImagePublicIds] = useState([]);
 
     const [formData, setFormData] = useState(
         pkg || {
@@ -104,11 +108,24 @@ export default function PackageForm() {
         setFormData((prev) => ({ ...prev, itinerary: newItinerary }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        toast.success(isEdit ? "Package updated!" : "Package created!");
-        console.log("Updated : ", formData);
-        navigate("/packages");
+        setLoading(true);
+        const data = new FormData();
+        for (let i = 0; i < formData.images.length; i++) {
+            data.append("images", formData.images[i]);
+        }
+        data.append("data", JSON.stringify(formData));
+        data.append("public_id", removedImagePublicIds);
+        try {
+            const res = isEdit ? await updatePackage(pkg._id, data) : await createPackage(data);
+            toast.success(isEdit ? "Package updated!" : "Package created!");
+            navigate("/packages");
+        } catch (error) {
+            console.error(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const inputClass =
@@ -486,7 +503,11 @@ export default function PackageForm() {
                     </div>
                 </div>
 
-                <ImageUploader images={formData.images} onImagesChange={(images) => setFormData((prev) => ({ ...prev, images }))} />
+                <ImageUploader
+                    setRemovedImagePublicIds={setRemovedImagePublicIds}
+                    images={formData.images}
+                    onImagesChange={(images) => setFormData((prev) => ({ ...prev, images }))}
+                />
 
                 {/* Action Buttons */}
                 <div className="flex items-center justify-end gap-x-4 pt-4">
@@ -499,7 +520,23 @@ export default function PackageForm() {
                     <button
                         type="submit"
                         className="rounded-lg bg-primary-600 px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
-                        {isEdit ? "Save Changes" : "Create Package"}
+                        {isEdit ? (
+                            loading ? (
+                                <div className="flex items-center gap-2">
+                                    <span>Updating Package</span>{" "}
+                                    <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                </div>
+                            ) : (
+                                "Save Changes"
+                            )
+                        ) : loading ? (
+                            <div className="flex items-center gap-2">
+                                <span>Creating Package</span>{" "}
+                                <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                            </div>
+                        ) : (
+                            "Create Package"
+                        )}
                     </button>
                 </div>
             </form>
