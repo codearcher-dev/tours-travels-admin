@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
     Edit,
@@ -31,14 +31,15 @@ import { deletePackage } from "../../services/packages.services";
 
 export default function PackagesList() {
     const data = usePackages();
-    const [packages, setPackages] = useState(data.packages);
+    const { loading } = usePackages();
+    const [packages, setPackages] = useState([]);
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
-    const [loading, setLoading] = useState(false);
+    const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
     const handleConfirmDelete = async () => {
         const id = confirmDialog.id;
-        setLoading(true);
+        setDeleteConfirmed(true);
         try {
             await deletePackage(id);
             const newPackages = packages.filter((p) => p._id !== id);
@@ -49,9 +50,11 @@ export default function PackagesList() {
             toast.error("Failed to delete package");
         } finally {
             setConfirmDialog({ isOpen: false, id: null });
-            setLoading(false);
+            setDeleteConfirmed(false);
         }
     };
+
+    useEffect(() => setPackages(data.packages), [data]);
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-12 relative">
@@ -94,27 +97,28 @@ export default function PackagesList() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                        {packages.map((pkg) => (
-                            <tr
-                                key={pkg._id}
-                                onClick={() => setSelectedPackage(pkg)}
-                                className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
-                                <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
-                                    <div className="flex items-center">
-                                        <div>
-                                            <div className="font-semibold text-gray-900 text-wrap">{pkg.name}</div>
+                        {!loading &&
+                            packages.map((pkg) => (
+                                <tr
+                                    key={pkg._id}
+                                    onClick={() => setSelectedPackage(pkg)}
+                                    className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
+                                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                        <div className="flex items-center">
+                                            <div>
+                                                <div className="font-semibold text-gray-900 text-wrap">{pkg.name}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-5 text-sm">
-                                    <span
-                                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${pkg.isActive ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-red-50 text-red-700 ring-red-600/20"}`}>
-                                        {pkg.isActive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                                        {pkg.isActive ? "Active" : "Inactive"}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="whitespace-nowrap px-3 py-5 text-sm">
+                                        <span
+                                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${pkg.isActive ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-red-50 text-red-700 ring-red-600/20"}`}>
+                                            {pkg.isActive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                                            {pkg.isActive ? "Active" : "Inactive"}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
                         {packages.length === 0 && (
                             <tr>
                                 <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
@@ -376,8 +380,8 @@ export default function PackagesList() {
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}
                 title="Delete Package"
-                confirmText={loading ? "Deleting" : "Delete"}
-                confirmed={loading}
+                confirmText={deleteConfirmed ? "Deleting" : "Delete"}
+                confirmed={deleteConfirmed}
                 message="Are you sure you want to delete this package? This action cannot be undone."
                 onConfirm={handleConfirmDelete}
                 onCancel={() => setConfirmDialog({ isOpen: false, id: null })}

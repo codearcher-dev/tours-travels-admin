@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp, Delete } from "lucide-react";
 import toast from "react-hot-toast";
@@ -10,7 +10,7 @@ import { ClipLoader } from "react-spinners";
 
 export default function DestinationsList() {
     const data = usePackages();
-    const [destinations, setDestinations] = useState(data.destinations);
+    const [destinations, setDestinations] = useState([]);
     const [selectedDestination, setSelectedDestination] = useState(null);
     const [showGallery, setShowGallery] = useState(false);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
@@ -32,6 +32,8 @@ export default function DestinationsList() {
             setLoading(false);
         }
     };
+
+    useEffect(() => setDestinations(data.destinations), [data]);
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-12 relative">
