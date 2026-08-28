@@ -18,3 +18,8 @@ export const updateEnquiryStatus = async (id) => {
     const res = await api.patch(`/enquiry/${id}`);
     return res.data;
 }
+
+export const countEnquiries = async (status) => {
+    const res = await api.get(`/enquiry/${status}`);
+    return res.data;
+}

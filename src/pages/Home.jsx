@@ -1,7 +1,10 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Users, Mail, Package, MapPin, TrendingUp } from "lucide-react";
+import { useData } from "../context/PackageContext";
+import { useEffect, useState } from "react";
+import CountUp from "../components/ui/CountUp";
 
-const data = [
+const barData = [
     { name: "Jan", enquiries: 40 },
     { name: "Feb", enquiries: 30 },
     { name: "Mar", enquiries: 20 },
@@ -11,14 +14,22 @@ const data = [
     { name: "Jul", enquiries: 34 },
 ];
 
-const stats = [
-    { name: "Total Packages", stat: "12", icon: Package, bgColor: "bg-blue-500", trend: "+2 this month" },
-    { name: "Total Destinations", stat: "8", icon: MapPin, bgColor: "bg-purple-500", trend: "Stable" },
-    { name: "Unique Visitors", stat: "2,400", icon: Users, bgColor: "bg-green-500", trend: "+12% vs last month" },
-    { name: "New Enquiries", stat: "24", icon: Mail, bgColor: "bg-orange-500", trend: "Needs attention" },
-];
-
 export default function Home() {
+    const data = useData();
+
+    const [stats, setStats] = useState([]);
+
+    useEffect(
+        () =>
+            setStats([
+                { name: "Total Packages", stat: data?.packages.length, icon: Package, bgColor: "bg-blue-500", trend: "+2 this month" },
+                { name: "Total Destinations", stat: data?.destinations.length, icon: MapPin, bgColor: "bg-purple-500", trend: "Stable" },
+                { name: "Unique Visitors", stat: "2400", icon: Users, bgColor: "bg-green-500", trend: "+12% vs last month" },
+                { name: "New Enquiries", stat: data.pendingCount, icon: Mail, bgColor: "bg-orange-500", trend: "Needs attention" },
+            ]),
+        [data],
+    );
+
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-12">
             <div>
@@ -40,7 +51,9 @@ export default function Home() {
                         <div className="mt-4">
                             <dt className="truncate text-sm font-medium text-gray-500">{item.name}</dt>
                             <dd className="mt-1 flex items-baseline">
-                                <div className="text-3xl font-extrabold text-gray-900 tracking-tight">{item.stat}</div>
+                                <div className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                                    <CountUp from={0} to={item.stat} separator="," direction="up" duration={1} className="count-up-text" delay={0} />
+                                </div>
                             </dd>
                         </div>
                     </div>
@@ -61,7 +74,7 @@ export default function Home() {
 
                 <div className="h-80 w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <BarChart data={barData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} />

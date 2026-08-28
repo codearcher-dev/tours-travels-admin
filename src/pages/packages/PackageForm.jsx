@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImageUploader from "../../components/ImageUploader";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plus, Trash2, X, Upload, IndianRupee, Clock, MapPin, List, Info, Utensils, Activity, Image as ImageIcon } from "lucide-react";
@@ -12,10 +12,9 @@ export default function PackageForm() {
     const navigate = useNavigate();
     const isEdit = Boolean(slug);
 
-    const { packages } = useData();
+    const data = useData();
+    const [packages, setPackages] = useState(data.packages || []);
     const [loading, setLoading] = useState(false);
-
-    console.log("slug : ", slug);
     const pkg = packages.find((p) => p.slug === slug);
     const [removedImagePublicIds, setRemovedImagePublicIds] = useState([]);
 
@@ -119,10 +118,13 @@ export default function PackageForm() {
         data.append("public_id", removedImagePublicIds);
         try {
             const res = isEdit ? await updatePackage(pkg._id, data) : await createPackage(data);
+            console.log(res);
+            setPackages((prev) => [res.package, ...prev.filter((p) => p._id !== pkg?._id)]);
             toast.success(isEdit ? "Package updated!" : "Package created!");
             navigate("/packages");
         } catch (error) {
-            console.error(error.message);
+            toast.error(error.message);
+            console.log(error.message);
         } finally {
             setLoading(false);
         }

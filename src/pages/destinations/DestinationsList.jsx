@@ -90,7 +90,10 @@ export default function DestinationsList() {
                                     <div className="flex items-center">
                                         <div>
                                             <div className="font-semibold text-gray-900">{dest.name}</div>
-                                            <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.places?.length || 0} places</div>
+                                            <div className="flex gap-2">
+                                                <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.places?.length || 0} places</div>
+                                                <div className="text-gray-500 text-xs mt-0.5 font-medium">{dest.images?.length || 0} images</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

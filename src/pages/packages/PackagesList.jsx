@@ -32,7 +32,7 @@ import { deletePackage } from "../../services/packages.services";
 export default function PackagesList() {
     const data = useData();
     const { loading } = useData();
-    const [packages, setPackages] = useState([]);
+    const [packages, setPackages] = useState(data.packages || []);
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
     const [deleteConfirmed, setDeleteConfirmed] = useState(false);
