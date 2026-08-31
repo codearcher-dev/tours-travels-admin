@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus, X, Star, MessageSquareHeart, Calendar, Package as PackageIcon, User } from "lucide-react";
 import { getFeedbacks } from "../../services/feedback.services";
 import { formatDateAndTime } from "../../utils/date";
+import { ClipLoader } from "react-spinners";
 
 const mockFeedbacks = [
     {
@@ -26,9 +27,10 @@ const mockFeedbacks = [
 export default function FeedbacksList() {
     const [feedbacks, setFeedbacks] = useState([]);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
-
+    const [loading, setaLoading] = useState(false);
     useEffect(() => {
         const fetchfeedbacks = async () => {
+            setaLoading(true);
             try {
                 const data = await getFeedbacks();
                 setFeedbacks(data.feedbacks);
@@ -36,6 +38,7 @@ export default function FeedbacksList() {
             } catch (error) {
                 console.error(error.message);
             }
+            setaLoading(false);
         };
 
         fetchfeedbacks();
@@ -96,13 +99,20 @@ export default function FeedbacksList() {
                                 </td>
                             </tr>
                         ))}
-                        {feedbacks.length === 0 && (
-                            <tr>
-                                <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
-                                    No feedbacks received yet.
-                                </td>
-                            </tr>
-                        )}
+                        {feedbacks.length === 0 &&
+                            (loading ? (
+                                <tr>
+                                    <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                    </td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+                                        No feedbacks received yet.
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>
