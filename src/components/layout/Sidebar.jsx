@@ -6,7 +6,8 @@ import {
   MessageSquare, 
   Mail, 
   Users,
-  LogOut
+  LogOut,
+  LineChart
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -16,6 +17,7 @@ const navItems = [
   { name: 'Destinations', path: '/destinations', icon: MapPin },
   { name: 'Feedbacks', path: '/feedbacks', icon: MessageSquare },
   { name: 'Enquiries', path: '/enquiries', icon: Mail },
+  { name: 'Insights', path: '/insights', icon: LineChart },
   { name: 'Admins', path: '/admins', icon: Users },
 ];
 

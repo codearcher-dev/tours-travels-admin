@@ -17,6 +17,7 @@ import DestinationForm from "./pages/destinations/DestinationForm";
 import FeedbacksList from "./pages/feedbacks/FeedbacksList";
 import FeedbackLinkForm from "./pages/feedbacks/FeedbackLinkForm";
 import EnquiriesList from "./pages/enquiries/EnquiriesList";
+import Insights from "./pages/insights/Insights";
 import Admins from "./pages/admins/Admins";
 
 function App() {
@@ -50,6 +51,8 @@ function App() {
                     </Route>
 
                     <Route path="enquiries" element={<EnquiriesList />} />
+
+                    <Route path="insights" element={<Insights />} />
 
                     <Route path="admins" element={<Admins />} />
 
