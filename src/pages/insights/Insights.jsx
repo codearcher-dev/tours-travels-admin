@@ -2,80 +2,142 @@ import { useState, useEffect } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Users, Eye, MousePointerClick, Clock } from "lucide-react";
 import { ClipLoader } from "react-spinners";
+import { getDailyInsights, getGlobalInsights } from "../../services/insight.services";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-// Mock function to simulate fetching data from the database
-const fetchInsightsData = async (range) => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+const fetchInsightsData = async (range, customStart, customEnd) => {
+    try {
+        // Fetch daily insights based on range
+        let start, end;
+        const now = new Date();
+        if (range === 'custom') {
+            if (customStart && customEnd) {
+                const startDate = new Date(customStart);
+                startDate.setHours(0, 0, 0, 0);
+                start = startDate.toISOString();
+                
+                const endDate = new Date(customEnd);
+                endDate.setHours(23, 59, 59, 999);
+                end = endDate.toISOString();
+            } else {
+                return null;
+            }
+        } else if (range === '7days') {
+            const startDate = new Date();
+            startDate.setDate(now.getDate() - 7);
+            start = startDate.toISOString();
+            end = now.toISOString();
+        } else if (range === '30days') {
+            const startDate = new Date();
+            startDate.setDate(now.getDate() - 30);
+            start = startDate.toISOString();
+            end = now.toISOString();
+        } else if (range === 'thisMonth') {
+            const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            start = startDate.toISOString();
+            end = now.toISOString();
+        } else if (range === 'lastMonth') {
+            const startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            const endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+            start = startDate.toISOString();
+            end = endDate.toISOString();
+        }
 
-    if (range === "allTime") {
+        const rawDailyData = await getDailyInsights(start, end);
+        let dataArray = [];
+        
+        if (Array.isArray(rawDailyData)) {
+            dataArray = rawDailyData;
+        } else if (rawDailyData?.data && Array.isArray(rawDailyData.data)) {
+            dataArray = rawDailyData.data;
+        } else if (rawDailyData?.insights && Array.isArray(rawDailyData.insights)) {
+            dataArray = rawDailyData.insights;
+        } else if (rawDailyData?.insight && Array.isArray(rawDailyData.insight)) {
+            dataArray = rawDailyData.insight;
+        } else if (typeof rawDailyData === 'object' && rawDailyData !== null) {
+            // Find the first array property in the object
+            const arrayVal = Object.values(rawDailyData).find(val => Array.isArray(val));
+            if (arrayVal) {
+                dataArray = arrayVal;
+            }
+        }
+        
+        let totalVisitors = 0;
+        let totalPageViews = 0;
+        let totalEnquiries = 0;
+        let formClicks = 0;
+        let whatsappClicks = 0;
+
+        const formattedDailyData = dataArray.map(item => {
+            const dateStr = item.createdAt?.$date || item.createdAt || new Date();
+            const date = new Date(dateStr);
+            const name = !isNaN(date) ? date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : "Unknown";
+            
+            const enquiriesCount = (item.enquiryClicks?.form || 0) + (item.enquiryClicks?.whatsapp || 0);
+            
+            totalVisitors += (item.visitors || 0);
+            totalPageViews += (item.pageViews || 0);
+            totalEnquiries += enquiriesCount;
+            formClicks += (item.enquiryClicks?.form || 0);
+            whatsappClicks += (item.enquiryClicks?.whatsapp || 0);
+
+            return {
+                name,
+                pageViews: item.pageViews || 0,
+                visitors: item.visitors || 0,
+                enquiries: enquiriesCount,
+                rawDate: dateStr
+            };
+        }).sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate)); // Sort oldest to newest (left to right)
+
         return {
-            dailyActivityData: [
-                { name: "2020", pageViews: 40000, visitors: 24000, enquiries: 240 },
-                { name: "2021", pageViews: 60000, visitors: 35000, enquiries: 380 },
-                { name: "2022", pageViews: 85000, visitors: 48000, enquiries: 550 },
-                { name: "2023", pageViews: 120000, visitors: 78000, enquiries: 890 },
-                { name: "2024", pageViews: 150000, visitors: 95000, enquiries: 1100 },
-                { name: "2025", pageViews: 180000, visitors: 115000, enquiries: 1350 },
-                { name: "2026", pageViews: 210000, visitors: 145000, enquiries: 1600 },
-            ],
+            dailyActivityData: formattedDailyData,
             trafficSourceData: [
-                { name: "Organic Search", value: 4500 },
-                { name: "Direct", value: 3100 },
-                { name: "Social Media", value: 2800 },
-                { name: "Referral", value: 1600 },
+                { name: "Form Enquiries", value: formClicks },
+                { name: "WhatsApp Enquiries", value: whatsappClicks }
             ],
             stats: [
-                { name: "Total Visitors (All Time)", value: "540K", change: "+150%", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-                { name: "Total Page Views", value: "845K", change: "+180%", icon: Eye, color: "text-green-600", bg: "bg-green-100" },
-                { name: "Avg. Click Rate", value: "16.5%", change: "+5.2%", icon: MousePointerClick, color: "text-yellow-600", bg: "bg-yellow-100" },
-                { name: "Avg. Session", value: "4m 15s", change: "+30s", icon: Clock, color: "text-purple-600", bg: "bg-purple-100" },
+                { name: "Visitors", value: totalVisitors, change: "", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
+                { name: "Page Views", value: totalPageViews, change: "", icon: Eye, color: "text-green-600", bg: "bg-green-100" },
+                { name: "Total Enquiries", value: totalEnquiries, change: "", icon: MousePointerClick, color: "text-yellow-600", bg: "bg-yellow-100" },
+                { name: "WhatsApp Enquiries", value: whatsappClicks, change: "", icon: MousePointerClick, color: "text-purple-600", bg: "bg-purple-100" },
             ],
-            chartTitle: "Historical Activity Overview (Yearly)",
-            barTitle: "Total enquiries (Yearly)",
+            chartTitle: "Activity Overview",
+            barTitle: "Enquiries",
+        };
+    } catch (error) {
+        console.error("Error fetching insights data:", error);
+        return {
+            dailyActivityData: [],
+            trafficSourceData: [],
+            stats: [
+                { name: "Visitors", value: 0, change: "", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
+                { name: "Page Views", value: 0, change: "", icon: Eye, color: "text-green-600", bg: "bg-green-100" },
+                { name: "Enquiries", value: 0, change: "", icon: MousePointerClick, color: "text-yellow-600", bg: "bg-yellow-100" },
+                { name: "WhatsApp Enquiries", value: 0, change: "", icon: MousePointerClick, color: "text-purple-600", bg: "bg-purple-100" },
+            ],
+            chartTitle: "Activity Overview (Error)",
+            barTitle: "Enquiries (Error)",
         };
     }
-
-    // Default to 7 days or other mock data
-    return {
-        dailyActivityData: [
-            { name: "Mon", pageViews: 4000, visitors: 2400, enquiries: 24 },
-            { name: "Tue", pageViews: 3000, visitors: 1398, enquiries: 18 },
-            { name: "Wed", pageViews: 2000, visitors: 9800, enquiries: 45 },
-            { name: "Thu", pageViews: 2780, visitors: 3908, enquiries: 30 },
-            { name: "Fri", pageViews: 1890, visitors: 4800, enquiries: 38 },
-            { name: "Sat", pageViews: 2390, visitors: 3800, enquiries: 50 },
-            { name: "Sun", pageViews: 3490, visitors: 4300, enquiries: 42 },
-        ],
-        trafficSourceData: [
-            { name: "Organic Search", value: 400 },
-            { name: "Direct", value: 300 },
-            { name: "Social Media", value: 300 },
-            { name: "Referral", value: 200 },
-        ],
-        stats: [
-            { name: "Total Visitors", value: "45.2K", change: "+12%", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-            { name: "Page Views", value: "128.4K", change: "+8%", icon: Eye, color: "text-green-600", bg: "bg-green-100" },
-            { name: "Click Rate", value: "14.2%", change: "+2.4%", icon: MousePointerClick, color: "text-yellow-600", bg: "bg-yellow-100" },
-            { name: "Avg. Session", value: "3m 45s", change: "-10s", icon: Clock, color: "text-purple-600", bg: "bg-purple-100" },
-        ],
-        chartTitle: "Daily Activity Overview",
-        barTitle: "enquiries (Last 7 Days)",
-    };
 };
 
 export default function Insights() {
     const [timeRange, setTimeRange] = useState("7days");
+    const [customStart, setCustomStart] = useState("");
+    const [customEnd, setCustomEnd] = useState("");
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (timeRange === "custom" && (!customStart || !customEnd)) {
+            return;
+        }
         let isMounted = true;
         setLoading(true);
-        fetchInsightsData(timeRange).then((fetchedData) => {
-            if (isMounted) {
+        fetchInsightsData(timeRange, customStart, customEnd).then((fetchedData) => {
+            if (isMounted && fetchedData) {
                 setData(fetchedData);
                 setLoading(false);
             }
@@ -83,7 +145,7 @@ export default function Insights() {
         return () => {
             isMounted = false;
         };
-    }, [timeRange]);
+    }, [timeRange, customStart, customEnd]);
 
     if (loading || !data) {
         return (
@@ -101,7 +163,7 @@ export default function Insights() {
                     <h1 className="text-2xl font-semibold text-gray-900">Insights & Analytics</h1>
                     <p className="mt-1 text-sm text-gray-500">Track your website's activity, visitor statistics, and daily performance.</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-3">
                     <select
                         value={timeRange}
                         onChange={(e) => setTimeRange(e.target.value)}
@@ -111,7 +173,25 @@ export default function Insights() {
                         <option value="thisMonth">This Month</option>
                         <option value="lastMonth">Last Month</option>
                         <option value="allTime">All Time</option>
+                        <option value="custom">Custom Range</option>
                     </select>
+                    {timeRange === 'custom' && (
+                        <div className="flex items-center gap-2">
+                            <input 
+                                type="date" 
+                                value={customStart}
+                                onChange={(e) => setCustomStart(e.target.value)}
+                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500" 
+                            />
+                            <span className="text-gray-500 text-sm font-medium">to</span>
+                            <input 
+                                type="date" 
+                                value={customEnd}
+                                onChange={(e) => setCustomEnd(e.target.value)}
+                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500" 
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
