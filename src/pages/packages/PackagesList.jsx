@@ -28,6 +28,7 @@ import { formatDateAndTime } from "../../utils/date";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { deletePackage } from "../../services/packages.services";
+import { ClipLoader } from "react-spinners";
 
 export default function PackagesList() {
     const data = useData();
@@ -119,17 +120,24 @@ export default function PackagesList() {
                                     </td>
                                 </tr>
                             ))}
-                        {packages.length === 0 && (
-                            <tr>
-                                <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
-                                    No packages found.{" "}
-                                    <Link to="/packages/new" className="text-primary-600 hover:underline">
-                                        Create one
-                                    </Link>
-                                    .
-                                </td>
-                            </tr>
-                        )}
+                        {packages.length === 0 &&
+                            (loading ? (
+                                <tr>
+                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                    </td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                        No packages found.{" "}
+                                        <Link to="/packages/new" className="text-primary-600 hover:underline">
+                                            Create one
+                                        </Link>
+                                        .
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>

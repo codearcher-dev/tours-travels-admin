@@ -99,17 +99,24 @@ export default function DestinationsList() {
                                 </td>
                             </tr>
                         ))}
-                        {destinations.length === 0 && (
-                            <tr>
-                                <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
-                                    No destinations found.{" "}
-                                    <Link to="/destinations/new" className="text-primary-600 hover:underline">
-                                        Create one
-                                    </Link>
-                                    .
-                                </td>
-                            </tr>
-                        )}
+                        {destinations.length === 0 &&
+                            (data.loading ? (
+                                <tr>
+                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                    </td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                        No destinations found.{" "}
+                                        <Link to="/destinations/new" className="text-primary-600 hover:underline">
+                                            Create one
+                                        </Link>
+                                        .
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>
