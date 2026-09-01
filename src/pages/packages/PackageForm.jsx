@@ -30,6 +30,7 @@ export default function PackageForm() {
             exclusions: [""],
             itinerary: [],
             isActive: true,
+            img: null,
             images: [], // mock for files
         },
     );
@@ -37,6 +38,7 @@ export default function PackageForm() {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+        console.log(formData);
     };
 
     const handleNestedChange = (category, field, value) => {
@@ -110,9 +112,13 @@ export default function PackageForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         const data = new FormData();
         for (let i = 0; i < formData.images.length; i++) {
             data.append("images", formData.images[i]);
+        }
+        if (formData.img && formData.img !== null) {
+            data.append("thumbnail", formData.img);
         }
         data.append("data", JSON.stringify(formData));
         data.append("public_id", removedImagePublicIds);
@@ -173,6 +179,49 @@ export default function PackageForm() {
                                 placeholder="Describe the experience..."
                                 className={inputClass}
                             />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <label className={labelClass}>Thumbnail Image</label>
+                            <div className="mt-2 flex items-center gap-x-3">
+                                {formData.img ? (
+                                    <div className="relative group rounded-xl overflow-hidden ring-1 ring-gray-900/10 h-32 w-48 bg-gray-100 flex-shrink-0 shadow-sm">
+                                        <img
+                                            src={formData.img.url || URL.createObjectURL(formData.img)}
+                                            alt="Thumbnail Preview"
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => (
+                                                    setFormData((prev) => ({ ...prev, img: null })),
+                                                    setRemovedImagePublicIds((prev) => [...prev, formData.img.publicId])
+                                                )}
+                                                className="bg-white/20 hover:bg-red-500 text-white p-2 rounded-full transition-all shadow-sm backdrop-blur-sm"
+                                                title="Remove image">
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <label className="relative cursor-pointer rounded-xl border-2 border-dashed border-gray-300 hover:border-primary-400 hover:bg-primary-50/50 transition-all flex flex-col items-center justify-center h-32 w-48 bg-gray-50/50 text-gray-500 group shadow-sm">
+                                        <ImageIcon className="h-8 w-8 mb-2 text-gray-400 group-hover:text-primary-500 transition-colors" />
+                                        <span className="text-sm font-semibold text-primary-600 group-hover:text-primary-500">Upload Thumbnail</span>
+                                        <span className="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files[0]) {
+                                                    setFormData((prev) => ({ ...prev, img: e.target.files[0] }));
+                                                }
+                                            }}
+                                        />
+                                    </label>
+                                )}
+                            </div>
                         </div>
 
                         <div className="sm:col-span-2 flex items-center gap-2 mt-2">
