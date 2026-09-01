@@ -18,7 +18,7 @@ export default function DestinationForm() {
     const [formData, setFormData] = useState(
         destination || {
             name: "",
-            places: [""],
+            places: [],
             images: [],
         },
     );
@@ -62,7 +62,8 @@ export default function DestinationForm() {
             toast.success(isEdit ? "Destination updated!" : "Destination created!");
             navigate("/destinations");
         } catch (error) {
-            console.error(error.message);
+            console.log(error.response);
+            toast.error(error.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -109,12 +110,6 @@ export default function DestinationForm() {
                             <MapPin className="w-5 h-5 text-primary-600" />
                             <h2 className="text-lg font-semibold leading-7 text-gray-900">Key Places</h2>
                         </div>
-                        <button
-                            type="button"
-                            onClick={addPlace}
-                            className="text-sm text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg hover:bg-primary-100 font-semibold flex items-center transition-colors">
-                            <Plus className="w-4 h-4 mr-1" /> Add Place
-                        </button>
                     </div>
 
                     <div className="space-y-3">
@@ -142,6 +137,12 @@ export default function DestinationForm() {
                                 <p className="text-sm text-gray-500">No places added yet.</p>
                             </div>
                         )}
+                        <button
+                            type="button"
+                            onClick={addPlace}
+                            className="w-full mt-2 text-sm text-primary-700 bg-primary-50 px-3 py-2 rounded-lg hover:bg-primary-100 font-semibold flex items-center justify-center transition-colors">
+                            <Plus className="w-4 h-4 mr-1" /> Add Place
+                        </button>
                     </div>
                 </div>
 

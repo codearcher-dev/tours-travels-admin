@@ -23,11 +23,11 @@ export default function PackageForm() {
             name: "",
             description: "",
             location: { name: "", url: "" },
-            duration: { days: 1, nights: 1 },
-            price: { currency: "INR", actual: 0, discounted: 0 },
-            destinations: [""],
-            inclusions: [""],
-            exclusions: [""],
+            duration: { days: null, nights: null },
+            price: { currency: "INR", actual: null, discounted: null },
+            destinations: [],
+            inclusions: [],
+            exclusions: [],
             itinerary: [],
             isActive: true,
             img: null,
@@ -335,12 +335,6 @@ export default function PackageForm() {
                                 <div key={category} className="bg-gray-50 rounded-xl p-3 border border-gray-100 h-full flex flex-col">
                                     <div className="flex items-center justify-between mb-4">
                                         <label className="block text-sm font-bold leading-6 text-gray-800 capitalize">{category}</label>
-                                        <button
-                                            type="button"
-                                            onClick={() => addArrayItem(category)}
-                                            className="text-xs text-primary-600 hover:text-primary-800 font-semibold flex items-center bg-primary-50 px-2 py-1 rounded-full">
-                                            <Plus className="w-3 h-3 mr-1" /> Add
-                                        </button>
                                     </div>
                                     <div className="space-y-3 flex-1">
                                         {formData[category].map((item, index) => (
@@ -363,6 +357,12 @@ export default function PackageForm() {
                                         {formData[category].length === 0 && (
                                             <p className="text-xs text-gray-400 italic text-center py-2">No items added.</p>
                                         )}
+                                        <button
+                                            type="button"
+                                            onClick={() => addArrayItem(category)}
+                                            className="mt-2 w-full text-xs text-primary-600 hover:text-primary-800 font-semibold flex items-center justify-center bg-primary-50 px-2 py-2 rounded-md transition-colors">
+                                            <Plus className="w-4 h-4 mr-1" /> Add {category.slice(0, -1)}
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -377,12 +377,6 @@ export default function PackageForm() {
                             <MapPin className="w-5 h-5 text-primary-600" />
                             <h2 className="text-lg font-semibold leading-7 text-gray-900">Day-wise Itinerary</h2>
                         </div>
-                        <button
-                            type="button"
-                            onClick={addDayPlan}
-                            className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-500 shadow-sm flex items-center transition-colors">
-                            <Plus className="w-4 h-4 mr-1.5" /> Add Day
-                        </button>
                     </div>
 
                     <div className="space-y-4 md:space-y-8">
@@ -468,12 +462,6 @@ export default function PackageForm() {
                                                     <Activity className="w-4 h-4 text-gray-400" />
                                                     <span className="text-sm font-semibold text-gray-800">Activities</span>
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => addActivity(dIdx)}
-                                                    className="text-xs text-primary-600 hover:text-primary-700 font-bold flex items-center bg-primary-50 px-2 py-1 rounded-md">
-                                                    <Plus className="w-3 h-3 mr-1" /> Add
-                                                </button>
                                             </div>
                                             <div className="space-y-3 flex-1">
                                                 {day.activities.map((act, aIdx) => (
@@ -532,6 +520,12 @@ export default function PackageForm() {
                                                 {day.activities.length === 0 && (
                                                     <p className="text-xs text-gray-400 italic text-center py-2">No activities added.</p>
                                                 )}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => addActivity(dIdx)}
+                                                    className="w-full mt-2 text-xs text-primary-600 hover:text-primary-700 font-bold flex items-center justify-center bg-primary-50 px-2 py-2 rounded-md transition-colors">
+                                                    <Plus className="w-4 h-4 mr-1" /> Add Activity
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -548,6 +542,16 @@ export default function PackageForm() {
                                     onClick={addDayPlan}
                                     className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 shadow-sm transition-colors">
                                     Add First Day
+                                </button>
+                            </div>
+                        )}
+                        {formData.itinerary.length > 0 && (
+                            <div className="flex justify-center mt-6">
+                                <button
+                                    type="button"
+                                    onClick={addDayPlan}
+                                    className="bg-primary-600 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-500 shadow-sm flex items-center transition-colors">
+                                    <Plus className="w-4 h-4 mr-1.5" /> Add Another Day
                                 </button>
                             </div>
                         )}
