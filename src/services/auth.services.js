@@ -19,3 +19,8 @@ export const changePassword = async ({ oldPassword, newPassword }) => {
     const res = await api.patch("/admin/password", { oldPassword, newPassword });
     return res.data;
 }
+
+export const registerAdmin = async (data) => {
+    const res = await api.post("/admin/register", data);
+    return res.data;
+}

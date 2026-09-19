@@ -4,7 +4,7 @@
  * Props:
  *   size  – "sm" | "lg"  (default "lg")
  *           "sm" → small white spinning ring, for use inside buttons
- *           "lg" → three staggered bouncing dots, for full-page / section loaders
+ *           "lg" → four staggered bouncing dots, for full-page / section loaders
  */
 export default function Spinner({ size = "lg" }) {
     if (size === "sm") {
@@ -17,12 +17,10 @@ export default function Spinner({ size = "lg" }) {
         );
     }
 
-    // "lg" — three bouncing dots
+    // "lg" — four bouncing dots
     return (
-        <div
-            className="flex items-center justify-center gap-2"
-            aria-label="Loading"
-            role="status">
+        <div className="flex items-center justify-center gap-2" aria-label="Loading" role="status">
+            <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.45s]" />
             <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.3s]" />
             <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.15s]" />
             <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce" />
