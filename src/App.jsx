@@ -19,6 +19,30 @@ import FeedbackLinkForm from "./pages/feedbacks/FeedbackLinkForm";
 import EnquiriesList from "./pages/enquiries/EnquiriesList";
 import Insights from "./pages/insights/Insights";
 import Admins from "./pages/admins/Admins";
+import { useUser } from "./context/UserContext";
+
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useUser();
+    console.log(user);
+    if (loading) {
+        return <></>;
+    }
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return children;
+};
+const PublicRoute = ({ children }) => {
+    const { user, loading } = useUser();
+    if (loading) {
+        return <></>;
+    }
+    if (user) {
+        return <Navigate to="/" replace />;
+    }
+    return children;
+};
 
 function App() {
     return (
@@ -26,11 +50,31 @@ function App() {
             <Toaster position="top-right" />
             <Routes>
                 {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/forgot-password"
+                    element={
+                        <PublicRoute>
+                            <ForgotPassword />
+                        </PublicRoute>
+                    }
+                />
 
                 {/* Protected Routes (Admin Layout) */}
-                <Route path="/" element={<Layout />}>
+                <Route
+                    path="/"
+                    element={
+                        <ProtectedRoute>
+                            <Layout />
+                        </ProtectedRoute>
+                    }>
                     <Route index element={<Home />} />
 
                     <Route path="packages">

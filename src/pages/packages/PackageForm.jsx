@@ -266,17 +266,6 @@ export default function PackageForm() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Days</label>
-                                    <input
-                                        required
-                                        type="number"
-                                        min="1"
-                                        value={formData.duration.days}
-                                        onChange={(e) => handleNestedChange("duration", "days", e.target.value)}
-                                        className={inputClass}
-                                    />
-                                </div>
-                                <div>
                                     <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Nights</label>
                                     <input
                                         required
@@ -284,6 +273,17 @@ export default function PackageForm() {
                                         min="1"
                                         value={formData.duration.nights}
                                         onChange={(e) => handleNestedChange("duration", "nights", e.target.value)}
+                                        className={inputClass}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-500 whitespace-nowrap truncate">Days</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        min="1"
+                                        value={formData.duration.days}
+                                        onChange={(e) => handleNestedChange("duration", "days", e.target.value)}
                                         className={inputClass}
                                     />
                                 </div>
