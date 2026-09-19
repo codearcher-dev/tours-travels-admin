@@ -6,7 +6,7 @@ import { useData } from "../../context/PackageContext";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { deleteDestination } from "../../services/destination.services";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 export default function DestinationsList() {
     const data = useData();
@@ -103,7 +103,7 @@ export default function DestinationsList() {
                             (data.loading ? (
                                 <tr>
                                     <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
-                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                        <Spinner />
                                     </td>
                                 </tr>
                             ) : (

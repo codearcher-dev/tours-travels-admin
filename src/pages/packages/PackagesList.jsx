@@ -28,7 +28,7 @@ import { formatDateAndTime } from "../../utils/date";
 import Gallery from "../../components/Gallery";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { deletePackage } from "../../services/packages.services";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 export default function PackagesList() {
     const data = useData();
@@ -124,7 +124,7 @@ export default function PackagesList() {
                             (loading ? (
                                 <tr>
                                     <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
-                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                        <Spinner />
                                     </td>
                                 </tr>
                             ) : (

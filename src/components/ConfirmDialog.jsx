@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { ClipLoader } from "react-spinners";
+import Spinner from "./ui/Spinner";
 
 export default function ConfirmDialog({
     isOpen,
@@ -49,7 +49,7 @@ export default function ConfirmDialog({
                                 onClick={onConfirm}
                                 className="inline-flex gap-2 items-center w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition-colors">
                                 <span>{confirmText}</span>
-                                <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />
+                                <Spinner size="sm" />
                             </button>
                         ) : (
                             <>

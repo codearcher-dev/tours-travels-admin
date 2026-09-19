@@ -5,7 +5,7 @@ import { Plus, Trash2, Upload, MapPin, Map, Image as ImageIcon, Info } from "luc
 import toast from "react-hot-toast";
 import { useData } from "../../context/PackageContext";
 import { createDestination, updateDestination } from "../../services/destination.services";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 export default function DestinationForm() {
     const { id } = useParams();
@@ -167,7 +167,7 @@ export default function DestinationForm() {
                             loading ? (
                                 <div className="flex items-center gap-2">
                                     <span>Updating Destination</span>{" "}
-                                    <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                    <Spinner size="sm" />
                                 </div>
                             ) : (
                                 "Save Changes"
@@ -175,7 +175,7 @@ export default function DestinationForm() {
                         ) : loading ? (
                             <div className="flex items-center gap-2">
                                 <span>Creating Destination</span>{" "}
-                                <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                <Spinner size="sm" />
                             </div>
                         ) : (
                             "Create Package"

@@ -5,7 +5,7 @@ import { Plus, Trash2, X, Upload, IndianRupee, Clock, MapPin, List, Info, Utensi
 import toast from "react-hot-toast";
 import { useData } from "../../context/PackageContext";
 import { createPackage, updatePackage } from "../../services/packages.services";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 export default function PackageForm() {
     const { slug } = useParams();
@@ -579,7 +579,7 @@ export default function PackageForm() {
                             loading ? (
                                 <div className="flex items-center gap-2">
                                     <span>Updating Package</span>{" "}
-                                    <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                    <Spinner size="sm" />
                                 </div>
                             ) : (
                                 "Save Changes"
@@ -587,7 +587,7 @@ export default function PackageForm() {
                         ) : loading ? (
                             <div className="flex items-center gap-2">
                                 <span>Creating Package</span>{" "}
-                                <ClipLoader size={16} color="white" aria-label="Loading Spinner" data-testid="loader" />{" "}
+                                <Spinner size="sm" />
                             </div>
                         ) : (
                             "Create Package"

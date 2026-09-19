@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus, X, Star, MessageSquareHeart, Calendar, Package as PackageIcon, User } from "lucide-react";
 import { getFeedbacks } from "../../services/feedback.services";
 import { formatDateAndTime } from "../../utils/date";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 const mockFeedbacks = [
     {
@@ -103,7 +103,7 @@ export default function FeedbacksList() {
                             (loading ? (
                                 <tr>
                                     <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
-                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                        <Spinner />
                                     </td>
                                 </tr>
                             ) : (

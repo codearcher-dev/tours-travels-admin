@@ -5,7 +5,7 @@ import { deleteEnquiry, getEnquiries, updateEnquiryStatus } from "../../services
 import { Link } from "react-router-dom";
 import whatsapp from "../../assets/whatsapp.png";
 import phone from "../../assets/phone.png";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 
 export default function EnquiriesList() {
     const [enquiries, setEnquiries] = useState([]);
@@ -129,7 +129,7 @@ export default function EnquiriesList() {
                             (loading ? (
                                 <tr>
                                     <td colSpan="3" className="py-12 text-center text-md font-semibold text-gray-500">
-                                        <ClipLoader size={160} color="red" aria-label="Loading Spinner" data-testid="loader" />
+                                        <Spinner />
                                     </td>
                                 </tr>
                             ) : (

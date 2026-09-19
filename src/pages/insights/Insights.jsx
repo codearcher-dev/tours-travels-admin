@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Users, Eye, MousePointerClick, Clock } from "lucide-react";
-import { ClipLoader } from "react-spinners";
+import Spinner from "../../components/ui/Spinner";
 import { getDailyInsights, getGlobalInsights } from "../../services/insight.services";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
@@ -151,7 +151,7 @@ export default function Insights() {
         return (
             <div className="flex h-screen items-center justify-center">
                 {/* <div className="text-gray-500">Loading insights data...</div> */}
-                <ClipLoader size={160} className="-mt-40" />
+                <Spinner />
             </div>
         );
     }

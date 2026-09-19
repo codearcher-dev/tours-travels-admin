@@ -14,3 +14,8 @@ export const getUser = async () => {
     const res = await api.get("/admin");
     return res.data;
 }
+
+export const changePassword = async ({ oldPassword, newPassword }) => {
+    const res = await api.patch("/admin/password", { oldPassword, newPassword });
+    return res.data;
+}
