@@ -28,7 +28,7 @@ const ProtectedRoute = ({ children }) => {
     if (loading) {
         return (
             <>
-                <div className="py-12 text-center text-sm text-gray-500">
+                <div className="flex h-screen w-full items-center justify-center text-sm text-gray-500">
                     <Spinner />
                 </div>
             </>
@@ -45,7 +45,7 @@ const PublicRoute = ({ children }) => {
     if (loading) {
         return (
             <>
-                <div className="py-12 text-center text-sm text-gray-500">
+                <div className="flex h-screen w-full items-center justify-center text-sm text-gray-500">
                     <Spinner />
                 </div>
             </>
