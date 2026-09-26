@@ -20,12 +20,19 @@ import EnquiriesList from "./pages/enquiries/EnquiriesList";
 import Insights from "./pages/insights/Insights";
 import Admins from "./pages/admins/Admins";
 import { useUser } from "./context/UserContext";
+import Spinner from "./components/ui/Spinner";
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useUser();
     console.log(user);
     if (loading) {
-        return <></>;
+        return (
+            <>
+                <div className="py-12 text-center text-sm text-gray-500">
+                    <Spinner />
+                </div>
+            </>
+        );
     }
     if (!user) {
         return <Navigate to="/login" replace />;
@@ -36,7 +43,13 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
     const { user, loading } = useUser();
     if (loading) {
-        return <></>;
+        return (
+            <>
+                <div className="py-12 text-center text-sm text-gray-500">
+                    <Spinner />
+                </div>
+            </>
+        );
     }
     if (user) {
         return <Navigate to="/" replace />;

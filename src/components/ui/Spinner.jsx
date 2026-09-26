@@ -20,10 +20,10 @@ export default function Spinner({ size = "lg" }) {
     // "lg" — four bouncing dots
     return (
         <div className="flex items-center justify-center gap-2" aria-label="Loading" role="status">
-            <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.45s]" />
-            <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.3s]" />
-            <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce [animation-delay:-0.15s]" />
-            <span className="h-3 w-3 rounded-full bg-primary-500 animate-bounce" />
+            <span className="h-3 w-3 rounded-full bg-red-500 animate-bounce [animation-delay:-0.45s]" />
+            <span className="h-3 w-3 rounded-full bg-yellow-500 animate-bounce [animation-delay:-0.3s]" />
+            <span className="h-3 w-3 rounded-full bg-green-500 animate-bounce [animation-delay:-0.15s]" />
+            <span className="h-3 w-3 rounded-full bg-blue-500 animate-bounce" />
         </div>
     );
 }
