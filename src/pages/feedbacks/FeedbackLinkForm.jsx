@@ -82,6 +82,8 @@ export default function FeedbackLinkForm() {
             setGeneratedLink(url);
             setFeedbackLinks((prev) => [data.link, ...prev]);
             toast.success("Feedback link generated!");
+            setSelectedPackageId("");
+            setQuestions(["How was the transportation?"]);
             setCopied(false);
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to generate link");
