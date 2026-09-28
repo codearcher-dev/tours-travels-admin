@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { useData } from "../../context/PackageContext";
 import { createFeedbackLink, deleteFeedbackLink, getFeedbackLinks } from "../../services/feedback.services";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import Spinner from "../../components/ui/Spinner";
 
 // Frequently used questions that admins can add with one click
 const PRESET_QUESTIONS = [
@@ -43,6 +44,7 @@ export default function FeedbackLinkForm() {
     const [copiedId, setCopiedId] = useState(null); // track which history row was copied
     const [showPresets, setShowPresets] = useState(false);
     const [deleteClicked, setDeleteClicked] = useState(false);
+    const [generating, setGenerating] = useState(false);
 
     const selectedPackage = packages?.find((p) => p._id === selectedPackageId);
     const addQuestion = () => setQuestions([...questions, ""]);
@@ -68,6 +70,7 @@ export default function FeedbackLinkForm() {
 
     const handleGenerate = async (e) => {
         e.preventDefault();
+        setGenerating(true);
         if (!selectedPackageId) {
             toast.error("Please select a package first.");
             return;
@@ -88,6 +91,7 @@ export default function FeedbackLinkForm() {
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to generate link");
         }
+        setGenerating(false);
     };
 
     const handleCopy = () => {
@@ -273,7 +277,14 @@ export default function FeedbackLinkForm() {
                             type="submit"
                             className="w-full flex justify-center items-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
                             <LinkIcon className="w-4 h-4" />
-                            Generate Shareable Link
+                            {generating ? (
+                                <>
+                                    Generating
+                                    <Spinner size="sm" />
+                                </>
+                            ) : (
+                                "Generate Shareable Link"
+                            )}
                         </button>
                     </div>
                 </form>
