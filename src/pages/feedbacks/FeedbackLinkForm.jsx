@@ -379,6 +379,7 @@ export default function FeedbackLinkForm() {
                                             <ConfirmDialog
                                                 title={"Confirm"}
                                                 message={"Are you sure you want to delete this feedback link? This action cannot be undone."}
+                                                confirmed={!deleteClicked}
                                                 isOpen={deleteClicked}
                                                 onConfirm={() => handleDeleteFeedbackLink(item._id)}
                                                 onCancel={() => setDeleteClicked(false)}

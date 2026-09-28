@@ -10,6 +10,7 @@ export default function ConfirmDialog({
     confirmed = false,
     confirmText = "Delete",
     cancelText = "Cancel",
+    ongoingText = "Deleting",
 }) {
     if (!isOpen) return null;
 
@@ -48,7 +49,7 @@ export default function ConfirmDialog({
                                 type="button"
                                 onClick={onConfirm}
                                 className="inline-flex gap-2 items-center w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition-colors">
-                                <span>{confirmText}</span>
+                                <span>{ongoingText}</span>
                                 <Spinner size="sm" />
                             </button>
                         ) : (
