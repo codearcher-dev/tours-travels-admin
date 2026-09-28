@@ -34,7 +34,6 @@ export default function FeedbacksList() {
             try {
                 const data = await getFeedbacks();
                 setFeedbacks(data.feedbacks);
-                console.log(data);
             } catch (error) {
                 console.error(error.message);
             }

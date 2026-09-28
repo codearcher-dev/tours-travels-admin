@@ -55,14 +55,13 @@ export default function DestinationForm() {
 
         data.append("data", JSON.stringify(formData));
         data.append("public_id", removedImagesPublicIds);
-        console.log(data);
 
         try {
             const res = isEdit ? await updateDestination(destination._id, data) : await createDestination(data);
             toast.success(isEdit ? "Destination updated!" : "Destination created!");
             navigate("/destinations");
         } catch (error) {
-            console.log(error.response);
+            console.error(error.response.data?.message);
             toast.error(error.response?.data?.message);
         } finally {
             setLoading(false);
@@ -166,16 +165,14 @@ export default function DestinationForm() {
                         {isEdit ? (
                             loading ? (
                                 <div className="flex items-center gap-2">
-                                    <span>Updating Destination</span>{" "}
-                                    <Spinner size="sm" />
+                                    <span>Updating Destination</span> <Spinner size="sm" />
                                 </div>
                             ) : (
                                 "Save Changes"
                             )
                         ) : loading ? (
                             <div className="flex items-center gap-2">
-                                <span>Creating Destination</span>{" "}
-                                <Spinner size="sm" />
+                                <span>Creating Destination</span> <Spinner size="sm" />
                             </div>
                         ) : (
                             "Create Package"

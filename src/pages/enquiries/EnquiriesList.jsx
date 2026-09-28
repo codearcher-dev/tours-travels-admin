@@ -66,7 +66,6 @@ export default function EnquiriesList() {
     };
 
     const handleLoadMore = async () => {
-        console.log("Laod more triggered", page);
         try {
             const data = await getEnquiries(page, status, debouncedSearch);
             setEnquiries((prev) => [...prev, ...data.enquiries]);

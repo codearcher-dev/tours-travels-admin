@@ -17,7 +17,6 @@ export const UserProvider = ({ children }) => {
 
         try {
             const data = await getUser();
-            console.log("data : ", data);
             setUser(data.user);
         } catch (error) {
             setError(error.response?.data?.message || "Failed to fetch user data");

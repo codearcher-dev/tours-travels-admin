@@ -38,7 +38,6 @@ export default function PackageForm() {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-        console.log(formData);
     };
 
     const handleNestedChange = (category, field, value) => {
@@ -124,13 +123,12 @@ export default function PackageForm() {
         data.append("public_id", removedImagePublicIds);
         try {
             const res = isEdit ? await updatePackage(pkg._id, data) : await createPackage(data);
-            console.log(res);
             setPackages((prev) => [res.package, ...prev.filter((p) => p._id !== pkg?._id)]);
             toast.success(isEdit ? "Package updated!" : "Package created!");
             navigate("/packages");
         } catch (error) {
             toast.error(error.message);
-            console.log(error.message);
+            console.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -578,16 +576,14 @@ export default function PackageForm() {
                         {isEdit ? (
                             loading ? (
                                 <div className="flex items-center gap-2">
-                                    <span>Updating Package</span>{" "}
-                                    <Spinner size="sm" />
+                                    <span>Updating Package</span> <Spinner size="sm" />
                                 </div>
                             ) : (
                                 "Save Changes"
                             )
                         ) : loading ? (
                             <div className="flex items-center gap-2">
-                                <span>Creating Package</span>{" "}
-                                <Spinner size="sm" />
+                                <span>Creating Package</span> <Spinner size="sm" />
                             </div>
                         ) : (
                             "Create Package"

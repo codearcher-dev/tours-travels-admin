@@ -57,8 +57,6 @@ export default function ImageUploader({ images, onImagesChange, setRemovedImageP
     const handleFiles = (files) => {
         const newFiles = Array.from(files);
         onImagesChange([...images, ...newFiles]);
-        console.log(typeof newFiles[0]);
-        // Clear input so selecting the same file again works
         if (inputRef.current) inputRef.current.value = "";
     };
 

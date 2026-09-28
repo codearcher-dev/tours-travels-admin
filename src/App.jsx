@@ -24,7 +24,6 @@ import Spinner from "./components/ui/Spinner";
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useUser();
-    console.log(user);
     if (loading) {
         return (
             <>
