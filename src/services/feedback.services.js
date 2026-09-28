@@ -9,3 +9,18 @@ export const deleteFeedback = async (id) => {
     const res = await api.delete(`/feedback/${id}`);
     return res.data;
 }
+
+export const createFeedbackLink = async (data) => {
+    const res = await api.post("/feedback/link", data);
+    return res.data;
+}
+
+export const getFeedbackLinks = async () => {
+    const res = await api.get("/feedback/link");
+    return res.data;
+}
+
+export const deleteFeedbackLink = async (id) => {
+    const res = await api.delete(`/feedback/link/${id}`);
+    return res.data;
+}

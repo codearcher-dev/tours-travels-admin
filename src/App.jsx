@@ -71,6 +71,16 @@ function App() {
                         </PublicRoute>
                     }
                 />
+
+                <Route
+                    path="/loading"
+                    element={
+                        <div className="flex h-screen w-full items-center justify-center text-sm text-gray-500">
+                            <Spinner />
+                        </div>
+                    }
+                />
+
                 <Route
                     path="/forgot-password"
                     element={
