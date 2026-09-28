@@ -11,7 +11,7 @@ export const deleteFeedback = async (id) => {
 }
 
 export const createFeedbackLink = async (data) => {
-    const res = await api.post("/feedback/link", data);
+    const res = await api.post("/feedback/link/create", data);
     return res.data;
 }
 
