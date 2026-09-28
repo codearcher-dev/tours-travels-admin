@@ -92,6 +92,7 @@ export default function FeedbackLinkForm() {
             toast.error(error.response?.data?.message || "Failed to generate link");
         }
         setGenerating(false);
+        setShowPresets(false);
     };
 
     const handleCopy = () => {
