@@ -328,7 +328,7 @@ export default function FeedbackLinkForm() {
                                             </span>
                                         </div>
                                         <p className="text-xs text-gray-400 truncate">
-                                            {item.createdAt.toLocaleString("en-IN", {
+                                            {new Date(item.createdAt).toLocaleString("en-IN", {
                                                 day: "2-digit",
                                                 month: "short",
                                                 year: "numeric",
