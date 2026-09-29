@@ -250,7 +250,7 @@ export default function FeedbackLinkForm() {
                                     <button
                                         type="button"
                                         onClick={() => removeQuestion(idx)}
-                                        className="mt-2 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                        className="mt-2 text-gray-400 hover:text-red-500 transition-colors">
                                         <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
