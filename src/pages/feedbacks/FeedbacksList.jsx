@@ -116,7 +116,6 @@ export default function FeedbacksList() {
                 </table>
             </div>
 
-            {/* Modern Modal */}
             {selectedFeedback && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div className="flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
@@ -142,7 +141,7 @@ export default function FeedbacksList() {
                                     <div className="flex flex-col gap-1.5 mt-2 text-xs text-gray-500 font-medium">
                                         <span className="flex gap-1">
                                             <PackageIcon className="w-4 h-4" />
-                                            <span>{selectedFeedback.package.name}</span>
+                                            <span>{selectedFeedback.package}</span>
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <Calendar className="w-4 h-4" /> {formatDateAndTime(selectedFeedback.createdAt)}
