@@ -70,11 +70,11 @@ export default function FeedbackLinkForm() {
 
     const handleGenerate = async (e) => {
         e.preventDefault();
-        setGenerating(true);
         if (!selectedPackageId) {
             toast.error("Please select a package first.");
             return;
         }
+        setGenerating(true);
         try {
             const payload = {
                 package: selectedPackage.name,
