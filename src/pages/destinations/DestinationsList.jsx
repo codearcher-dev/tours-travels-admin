@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp, Delete } from "lucide-react";
+import { Edit, Trash2, Plus, Search, X, MapPin, ImageIcon, ChevronDown, ChevronUp, Delete, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import { useData } from "../../context/PackageContext";
 import Gallery from "../../components/Gallery";
@@ -45,7 +45,7 @@ export default function DestinationsList() {
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
                         to="/destinations/new"
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
                         <Plus className="h-4 w-4" />
                         Add New Destination
                     </Link>
@@ -65,14 +65,22 @@ export default function DestinationsList() {
                 </div>
             </div>
 
+            <div className="flex justify-end-safe px-3">
+                <button className="flex gap-1 items-center text-blue-500 hover:text-blue-600 cursor-pointer" onClick={() => data.retry()}>
+                    Refresh <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+            </div>
+
             <div className="mt-6 overflow-hidden shadow-sm ring-1 ring-gray-900/5 rounded-xl bg-white">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="w-16 py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                            <th className="w-16 py-4 pl-4 pr-3 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
                                 S.No.
                             </th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Destination Info</th>
+                            <th className="px-3 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                Destination Info
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
@@ -83,10 +91,10 @@ export default function DestinationsList() {
                                 className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
                                 <td className="w-16 whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
                                     <div className="flex items-center">
-                                        <div className="text-gray-500 text-sm font-medium">{i + 1}</div>
+                                        <div className="text-gray-500 text-xs md:text-sm font-medium">{i + 1}</div>
                                     </div>
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-5 text-sm">
+                                <td className="whitespace-nowrap px-3 py-5 text-xs md:text-sm">
                                     <div className="flex items-center">
                                         <div>
                                             <div className="font-semibold text-gray-900">{dest.name}</div>

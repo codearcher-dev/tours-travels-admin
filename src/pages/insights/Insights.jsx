@@ -11,42 +11,46 @@ const fetchInsightsData = async (range, customStart, customEnd) => {
         // Fetch daily insights based on range
         let start, end;
         const now = new Date();
-        if (range === 'custom') {
+        if (range === "custom") {
             if (customStart && customEnd) {
                 const startDate = new Date(customStart);
                 startDate.setHours(0, 0, 0, 0);
                 start = startDate.toISOString();
-                
+
                 const endDate = new Date(customEnd);
                 endDate.setHours(23, 59, 59, 999);
                 end = endDate.toISOString();
             } else {
                 return null;
             }
-        } else if (range === '7days') {
+        } else if (range === "7days") {
             const startDate = new Date();
             startDate.setDate(now.getDate() - 7);
             start = startDate.toISOString();
             end = now.toISOString();
-        } else if (range === '30days') {
+        } else if (range === "30days") {
             const startDate = new Date();
             startDate.setDate(now.getDate() - 30);
             start = startDate.toISOString();
             end = now.toISOString();
-        } else if (range === 'thisMonth') {
+        } else if (range === "thisMonth") {
             const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
             start = startDate.toISOString();
             end = now.toISOString();
-        } else if (range === 'lastMonth') {
+        } else if (range === "lastMonth") {
             const startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
             const endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
             start = startDate.toISOString();
             end = endDate.toISOString();
+        } else if (range === "allTime") {
+            const startDate = new Date("2026-08-30T19:39:19.101+00:00");
+            start = startDate.toISOString();
+            end = now.toISOString();
         }
 
         const rawDailyData = await getDailyInsights(start, end);
         let dataArray = [];
-        
+
         if (Array.isArray(rawDailyData)) {
             dataArray = rawDailyData;
         } else if (rawDailyData?.data && Array.isArray(rawDailyData.data)) {
@@ -55,53 +59,69 @@ const fetchInsightsData = async (range, customStart, customEnd) => {
             dataArray = rawDailyData.insights;
         } else if (rawDailyData?.insight && Array.isArray(rawDailyData.insight)) {
             dataArray = rawDailyData.insight;
-        } else if (typeof rawDailyData === 'object' && rawDailyData !== null) {
+        } else if (typeof rawDailyData === "object" && rawDailyData !== null) {
             // Find the first array property in the object
-            const arrayVal = Object.values(rawDailyData).find(val => Array.isArray(val));
+            const arrayVal = Object.values(rawDailyData).find((val) => Array.isArray(val));
             if (arrayVal) {
                 dataArray = arrayVal;
             }
         }
-        
+
         let totalVisitors = 0;
         let totalPageViews = 0;
         let totalEnquiries = 0;
         let formClicks = 0;
         let whatsappClicks = 0;
 
-        const formattedDailyData = dataArray.map(item => {
-            const dateStr = item.createdAt?.$date || item.createdAt || new Date();
-            const date = new Date(dateStr);
-            const name = !isNaN(date) ? date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : "Unknown";
-            
-            const enquiriesCount = (item.enquiryClicks?.form || 0) + (item.enquiryClicks?.whatsapp || 0);
-            
-            totalVisitors += (item.visitors || 0);
-            totalPageViews += (item.pageViews || 0);
-            totalEnquiries += enquiriesCount;
-            formClicks += (item.enquiryClicks?.form || 0);
-            whatsappClicks += (item.enquiryClicks?.whatsapp || 0);
+        const formattedDailyData = dataArray
+            .map((item) => {
+                const dateStr = item.createdAt?.$date || item.createdAt || new Date();
+                const date = new Date(dateStr);
+                const name = !isNaN(date) ? date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Unknown";
 
-            return {
-                name,
-                pageViews: item.pageViews || 0,
-                visitors: item.visitors || 0,
-                enquiries: enquiriesCount,
-                rawDate: dateStr
-            };
-        }).sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate)); // Sort oldest to newest (left to right)
+                const enquiriesCount = (item.enquiryClicks?.form || 0) + (item.enquiryClicks?.whatsapp || 0);
+
+                totalVisitors += item.visitors || 0;
+                totalPageViews += item.pageViews || 0;
+                totalEnquiries += enquiriesCount;
+                formClicks += item.enquiryClicks?.form || 0;
+                whatsappClicks += item.enquiryClicks?.whatsapp || 0;
+
+                return {
+                    name,
+                    pageViews: item.pageViews || 0,
+                    visitors: item.visitors || 0,
+                    enquiries: enquiriesCount,
+                    rawDate: dateStr,
+                };
+            })
+            .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate)); // Sort oldest to newest (left to right)
 
         return {
             dailyActivityData: formattedDailyData,
             trafficSourceData: [
                 { name: "Form Enquiries", value: formClicks },
-                { name: "WhatsApp Enquiries", value: whatsappClicks }
+                { name: "WhatsApp Enquiries", value: whatsappClicks },
             ],
             stats: [
                 { name: "Visitors", value: totalVisitors, change: "", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
                 { name: "Page Views", value: totalPageViews, change: "", icon: Eye, color: "text-green-600", bg: "bg-green-100" },
-                { name: "Total Enquiries", value: totalEnquiries, change: "", icon: MousePointerClick, color: "text-yellow-600", bg: "bg-yellow-100" },
-                { name: "WhatsApp Enquiries", value: whatsappClicks, change: "", icon: MousePointerClick, color: "text-purple-600", bg: "bg-purple-100" },
+                {
+                    name: "Total Enquiries",
+                    value: totalEnquiries,
+                    change: "",
+                    icon: MousePointerClick,
+                    color: "text-yellow-600",
+                    bg: "bg-yellow-100",
+                },
+                {
+                    name: "WhatsApp Enquiries",
+                    value: whatsappClicks,
+                    change: "",
+                    icon: MousePointerClick,
+                    color: "text-purple-600",
+                    bg: "bg-purple-100",
+                },
             ],
             chartTitle: "Activity Overview",
             barTitle: "Enquiries",
@@ -175,20 +195,20 @@ export default function Insights() {
                         <option value="allTime">All Time</option>
                         <option value="custom">Custom Range</option>
                     </select>
-                    {timeRange === 'custom' && (
+                    {timeRange === "custom" && (
                         <div className="flex items-center gap-2">
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
                                 value={customStart}
                                 onChange={(e) => setCustomStart(e.target.value)}
-                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500" 
+                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500"
                             />
                             <span className="text-gray-500 text-sm font-medium">to</span>
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
                                 value={customEnd}
                                 onChange={(e) => setCustomEnd(e.target.value)}
-                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500" 
+                                className="block rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-primary-500 focus:ring-primary-500"
                             />
                         </div>
                     )}
@@ -198,7 +218,7 @@ export default function Insights() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {data.stats.map((stat) => (
-                    <div key={stat.name} className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6">
+                    <div key={stat.name} className="relative overflow-hidden rounded-lg bg-white px-4 pb-0 pt-5 shadow sm:px-6 sm:pt-6">
                         <dt>
                             <div className={`absolute rounded-md p-3 ${stat.bg}`}>
                                 <stat.icon className={`h-6 w-6 ${stat.color}`} aria-hidden="true" />
@@ -224,10 +244,10 @@ export default function Insights() {
                     <h2 className="text-lg font-medium text-gray-900 mb-4">{data.chartTitle}</h2>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={data.dailyActivityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <LineChart data={data.dailyActivityData} margin={{ top: 5, right: 30, left: -20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                                <YAxis axisLine={false} tickLine={false} />
+                                <XAxis dataKey="name" axisLine={true} tickLine={true} />
+                                <YAxis axisLine={true} tickLine={true} />
                                 <Tooltip />
                                 <Legend />
                                 <Line type="monotone" dataKey="pageViews" name="Page Views" stroke="#0088FE" strokeWidth={2} activeDot={{ r: 8 }} />
@@ -247,7 +267,7 @@ export default function Insights() {
                                     data={data.trafficSourceData}
                                     cx="50%"
                                     cy="50%"
-                                    labelLine={false}
+                                    labelLine={true}
                                     outerRadius={100}
                                     fill="#8884d8"
                                     dataKey="value"
@@ -267,7 +287,7 @@ export default function Insights() {
                     <h2 className="text-lg font-medium text-gray-900 mb-4">{data.barTitle}</h2>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.dailyActivityData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <BarChart data={data.dailyActivityData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                                 <YAxis axisLine={false} tickLine={false} />

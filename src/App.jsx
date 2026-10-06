@@ -1,5 +1,8 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { Capacitor } from "@capacitor/core";
+import { useEffect } from "react";
+import "./App.css";
 
 // Layout
 import Layout from "./components/layout/Layout";
@@ -21,6 +24,8 @@ import Insights from "./pages/insights/Insights";
 import Admins from "./pages/admins/Admins";
 import { useUser } from "./context/UserContext";
 import Spinner from "./components/ui/Spinner";
+import { initPushNotifications, pendingRoute } from "./services/push-notification.services.js";
+import useBackButton from "./hooks/native/useBackButton.jsx";
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useUser();
@@ -57,6 +62,33 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+    const navigate = useNavigate();
+    const { loading, user } = useUser();
+
+    useBackButton();
+
+    useEffect(() => {
+        console.log("App mounted, initializing push notifications...");
+        initPushNotifications();
+    }, []);
+
+    useEffect(() => {
+        const handler = () => {
+            if (!loading && user && pendingRoute.value) {
+                console.log("Navigating to : ", pendingRoute.value);
+                const r = pendingRoute.value;
+                pendingRoute.value = null;
+                navigate(r, { replace: true });
+            }
+        };
+
+        handler(); // Call the handler immediately in case there's a pending route on mount
+        window.addEventListener("push-navigate", handler);
+        return () => {
+            window.removeEventListener("push-navigate", handler);
+        };
+    }, [loading, user, navigate]);
+
     return (
         <>
             <Toaster position="top-right" />

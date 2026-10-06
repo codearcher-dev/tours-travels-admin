@@ -12,7 +12,10 @@ export const PackageProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetch = async () => {
+    const initializeData = async () => {
+        setPackages([]);
+        setDestinations([]);
+        setPendingEnquiriesCount(0);
         setLoading(true);
         setError(null);
 
@@ -24,19 +27,28 @@ export const PackageProvider = ({ children }) => {
             setDestinations(destinationData.destinations);
             setPendingEnquiriesCount(pendingCount.count);
         } catch (error) {
-            setError(error.response?.data?.message || "Failed to fetch packages");
+            setError(error.response?.data?.message || "Failed to initialize data packages");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetch();
+        initializeData();
     }, []);
 
     return (
         <PackageContext.Provider
-            value={{ packages, setPackages, destinations, setDestinations, pendingCount: pendingEnquiriesCount, loading, error, retry: fetch }}>
+            value={{
+                packages,
+                setPackages,
+                destinations,
+                setDestinations,
+                pendingCount: pendingEnquiriesCount,
+                loading,
+                error,
+                retry: initializeData,
+            }}>
             {children}
         </PackageContext.Provider>
     );

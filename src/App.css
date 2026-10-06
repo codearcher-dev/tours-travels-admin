@@ -1,0 +1,8 @@
+.recharts-wrapper,
+.recharts-surface,
+.recharts-wrapper *:focus,
+.recharts-sector:focus,
+.recharts-rectangle:focus,
+.recharts-layer:focus {
+    outline: none !important;
+}

@@ -1,0 +1,9 @@
+{
+    "appId": "in.primetraveller.admin",
+    "appName": "Prime Traveller Admin",
+    "webDir": "dist",
+    "server": {
+        "androidScheme": "https",
+        "cleartext": false
+    }
+}

@@ -105,7 +105,7 @@ export default function Admins() {
                 <div className="pt-6 mt-6 border-t border-gray-100 flex justify-end">
                     <button
                         type="submit"
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-2.5 text-xs sm:text-sm  font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
                         <UserPlus className="w-4 h-4" />
                         Register Admin
                     </button>

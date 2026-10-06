@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
-import { X, Search, Package as PackageIcon, Calendar, User, Mail, Phone, Users, MessageSquare, CheckCircle2, MessageCircle } from "lucide-react";
+import {
+    X,
+    Search,
+    Package as PackageIcon,
+    Calendar,
+    User,
+    Mail,
+    Phone,
+    Users,
+    MessageSquare,
+    CheckCircle2,
+    MessageCircle,
+    RotateCcw,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { deleteEnquiry, getEnquiries, updateEnquiryStatus } from "../../services/enquiry.services";
 import { Link } from "react-router-dom";
@@ -9,11 +22,16 @@ import Spinner from "../../components/ui/Spinner";
 
 export default function EnquiriesList() {
     const [enquiries, setEnquiries] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+    const [loading, setLoading] = useState(false);
+    const [marking, setMarking] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [allLoaded, setAllLoaded] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+
     const [selectedEnquiry, setSelectedEnquiry] = useState(null);
     const [page, setPage] = useState(0);
     const [status, setStatus] = useState("");
-    const [allLoaded, setAllLoaded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -24,24 +42,27 @@ export default function EnquiriesList() {
         return () => clearTimeout(handler);
     }, [searchQuery]);
 
+    const fetchEnquiries = async () => {
+        setEnquiries([]);
+        setLoading(true);
+        try {
+            const data = await getEnquiries(0, status, debouncedSearch);
+            setEnquiries(data.enquiries);
+            setPage(1);
+            setAllLoaded(data.enquiries.length < 20);
+        } catch (error) {
+            console.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchEnquiries = async () => {
-            setLoading(true);
-            try {
-                const data = await getEnquiries(0, status, debouncedSearch);
-                setEnquiries(data.enquiries);
-                setPage(1);
-                setAllLoaded(data.enquiries.length < 20);
-            } catch (error) {
-                console.error(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchEnquiries();
     }, [status, debouncedSearch]);
 
     const handleComplete = async (id) => {
+        setMarking(true);
         try {
             await updateEnquiryStatus(id);
             setEnquiries((prev) => prev.map((e) => (e._id === id ? { ...e, status: "completed" } : e)));
@@ -51,9 +72,11 @@ export default function EnquiriesList() {
             console.error(error.message);
             toast.error("Failed to serve");
         }
+        setMarking(false);
     };
 
     const handleDelete = async (id) => {
+        setDeleting(true);
         try {
             await deleteEnquiry(id);
             setEnquiries((prev) => prev.filter((e) => e._id !== id));
@@ -63,9 +86,11 @@ export default function EnquiriesList() {
             console.error(error.message);
             toast.error("Failed to serve");
         }
+        setDeleting(false);
     };
 
     const handleLoadMore = async () => {
+        setLoadingMore(true);
         try {
             const data = await getEnquiries(page, status, debouncedSearch);
             setEnquiries((prev) => [...prev, ...data.enquiries]);
@@ -74,6 +99,7 @@ export default function EnquiriesList() {
         } catch (error) {
             console.error(error.message);
         }
+        setLoadingMore(false);
     };
 
     return (
@@ -114,13 +140,21 @@ export default function EnquiriesList() {
                 </div>
             </div>
 
+            <div className="flex justify-end-safe px-3">
+                <button className="flex gap-1 items-center text-blue-500 hover:text-blue-600 cursor-pointer" onClick={() => fetchEnquiries()}>
+                    Refresh <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+            </div>
+
             <div className="mt-6 overflow-hidden shadow-sm ring-1 ring-gray-900/5 rounded-xl bg-white">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">Name</th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Package</th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="py-4 pl-4 pr-3 text-left text-xs md:text-sm  font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                                Name
+                            </th>
+                            <th className="px-3 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">Package</th>
+                            <th className="px-3 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
@@ -143,23 +177,29 @@ export default function EnquiriesList() {
                                 <tr
                                     key={enq._id}
                                     onClick={() => setSelectedEnquiry(enq)}
-                                    className={`cursor-pointer ${enq.status === "pending" ? "bg-orange-50 text-orange-700 hover:bg-orange-100" : ""} transition-colors group`}>
-                                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                    className={`cursor-pointer border-b-2 ${
+                                        enq.status === "pending" ? "bg-orange-50 text-orange-700 hover:bg-orange-100" : ""
+                                    } transition-colors group`}>
+                                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-xs md:text-sm sm:pl-6">
                                         <div className="flex items-center">
                                             <div>
                                                 <div className="font-semibold">{enq.name}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-5 text-sm font-medium">
+                                    <td className="whitespace-nowrap px-3 py-5 text-xs md:text-sm font-medium">
                                         <div className="flex gap-1.5 text-wrap">
                                             {/* <PackageIcon className="w-4 h-4 text-primary-500" /> */}
                                             <span>{enq.package}</span>
                                         </div>
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-5 text-sm">
+                                    <td className="whitespace-nowrap px-3 py-5">
                                         <span
-                                            className={`bg-blue-200 inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-semibold ring-1 ring-inset ${enq.status === "completed" ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-orange-50 text-orange-700 ring-orange-600/20"}`}>
+                                            className={`bg-blue-200 inline-flex items-center gap-1 rounded-full px-1 py-0.5 md:px-2 md:py-1 text-[10px] md:text-sm font-semibold ring-1 ring-inset ${
+                                                enq.status === "completed"
+                                                    ? "bg-green-50 text-green-700 ring-green-600/20"
+                                                    : "bg-orange-50 text-orange-700 ring-orange-600/20"
+                                            }`}>
                                             {enq.status === "completed" ? (
                                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                             ) : (
@@ -177,7 +217,7 @@ export default function EnquiriesList() {
                                         <button
                                             onClick={handleLoadMore}
                                             className="text-primary-600 font-semibold hover:text-primary-500 transition-colors cursor-pointer">
-                                            Load more
+                                            {loadingMore ? <Spinner /> : "Load More"}
                                         </button>
                                     ) : (
                                         <span className="text-gray-500 font-semibold transition-colors">No more Enquiries</span>
@@ -220,7 +260,11 @@ export default function EnquiriesList() {
                                 </div>
 
                                 <span
-                                    className={`inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-semibold ring-1 ring-inset ${selectedEnquiry.status === "completed" ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-orange-50 text-orange-700 ring-orange-600/20"}`}>
+                                    className={`inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-semibold ring-1 ring-inset ${
+                                        selectedEnquiry.status === "completed"
+                                            ? "bg-green-50 text-green-700 ring-green-600/20"
+                                            : "bg-orange-50 text-orange-700 ring-orange-600/20"
+                                    }`}>
                                     {selectedEnquiry.status === "completed" ? (
                                         <CheckCircle2 className="w-4 h-4" />
                                     ) : (
@@ -332,7 +376,17 @@ export default function EnquiriesList() {
                                         type="button"
                                         onClick={() => handleComplete(selectedEnquiry._id)}
                                         className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 transition-colors">
-                                        <CheckCircle2 className="w-4 h-4" /> Mark as Served
+                                        {marking ? (
+                                            <div className="flex gap-1 items-center">
+                                                Marking
+                                                <Spinner size="sm" />
+                                            </div>
+                                        ) : (
+                                            <div className="flex gap-1 items-center">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                                Mark as Served
+                                            </div>
+                                        )}
                                     </button>
                                 )}
                                 {selectedEnquiry.status === "completed" && (
@@ -340,7 +394,17 @@ export default function EnquiriesList() {
                                         type="button"
                                         onClick={() => handleDelete(selectedEnquiry._id)}
                                         className="inline-flex items-center gap-1.5 justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors">
-                                        <CheckCircle2 className="w-4 h-4" /> Delete
+                                        {deleting ? (
+                                            <div className="flex gap-1 items-center">
+                                                Deleting
+                                                <Spinner size="sm" />
+                                            </div>
+                                        ) : (
+                                            <div className="flex gap-1 items-center">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                                Delete
+                                            </div>
+                                        )}
                                     </button>
                                 )}
                             </div>

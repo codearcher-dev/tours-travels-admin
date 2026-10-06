@@ -20,6 +20,7 @@ import {
     Image as ImageIcon,
     ChevronDown,
     ChevronUp,
+    RotateCcw,
 } from "lucide-react";
 
 import toast from "react-hot-toast";
@@ -67,7 +68,7 @@ export default function PackagesList() {
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
                         to="/packages/new"
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
                         <Plus className="h-4 w-4" />
                         Add New Package
                     </Link>
@@ -82,19 +83,25 @@ export default function PackagesList() {
                     <input
                         type="text"
                         placeholder="Search packages..."
-                        className="block w-full rounded-lg border-0 py-2 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 transition-all"
+                        className="block w-full rounded-lg border-0 py-2 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-xs md:text-sm sm:leading-6 transition-all"
                     />
                 </div>
+            </div>
+
+            <div className="flex justify-end-safe px-3">
+                <button className="flex gap-1 items-center text-blue-500 hover:text-blue-600 cursor-pointer" onClick={() => data.retry()}>
+                    Refresh <RotateCcw className="w-3.5 h-3.5" />
+                </button>
             </div>
 
             <div className="mt-6 overflow-hidden shadow-sm ring-1 ring-gray-900/5 rounded-xl bg-white">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                            <th className="py-4 pl-4 pr-3 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
                                 Package Info
                             </th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="px-4 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
@@ -104,16 +111,20 @@ export default function PackagesList() {
                                     key={pkg._id}
                                     onClick={() => setSelectedPackage(pkg)}
                                     className="hover:bg-gray-50/80 transition-colors group cursor-pointer">
-                                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-xs md:text-sm sm:pl-6">
                                         <div className="flex items-center">
                                             <div>
                                                 <div className="font-semibold text-gray-900 text-wrap">{pkg.name}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="whitespace-nowrap px-3 py-5 text-sm">
+                                    <td className="whitespace-nowrap px-3 py-5 text-xs md:text-sm">
                                         <span
-                                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${pkg.isActive ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-red-50 text-red-700 ring-red-600/20"}`}>
+                                            className={`inline-flex items-center gap-1 rounded-full px-1 py-0.5 md:px-2 md:py-1 text-xs font-semibold ring-1 ring-inset ${
+                                                pkg.isActive
+                                                    ? "bg-green-50 text-green-700 ring-green-600/20"
+                                                    : "bg-red-50 text-red-700 ring-red-600/20"
+                                            }`}>
                                             {pkg.isActive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
                                             {pkg.isActive ? "Active" : "Inactive"}
                                         </span>
@@ -123,13 +134,13 @@ export default function PackagesList() {
                         {packages.length === 0 &&
                             (loading ? (
                                 <tr>
-                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                    <td colSpan="2" className="py-12 text-center text-xs md:text-sm text-gray-500">
                                         <Spinner />
                                     </td>
                                 </tr>
                             ) : (
                                 <tr>
-                                    <td colSpan="2" className="py-12 text-center text-sm text-gray-500">
+                                    <td colSpan="2" className="py-12 text-center text-xs md:text-sm text-gray-500">
                                         No packages found.{" "}
                                         <Link to="/packages/new" className="text-primary-600 hover:underline">
                                             Create one
@@ -314,15 +325,27 @@ export default function PackagesList() {
                                                                 </div>
                                                                 <div className="flex gap-2">
                                                                     <span
-                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${day.mealsIncluded?.breakfast ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-400 line-through"}`}>
+                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
+                                                                            day.mealsIncluded?.breakfast
+                                                                                ? "bg-orange-100 text-orange-800"
+                                                                                : "bg-gray-100 text-gray-400 line-through"
+                                                                        }`}>
                                                                         B
                                                                     </span>
                                                                     <span
-                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${day.mealsIncluded?.lunch ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-400 line-through"}`}>
+                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
+                                                                            day.mealsIncluded?.lunch
+                                                                                ? "bg-orange-100 text-orange-800"
+                                                                                : "bg-gray-100 text-gray-400 line-through"
+                                                                        }`}>
                                                                         L
                                                                     </span>
                                                                     <span
-                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${day.mealsIncluded?.dinner ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-400 line-through"}`}>
+                                                                        className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
+                                                                            day.mealsIncluded?.dinner
+                                                                                ? "bg-orange-100 text-orange-800"
+                                                                                : "bg-gray-100 text-gray-400 line-through"
+                                                                        }`}>
                                                                         D
                                                                     </span>
                                                                 </div>

@@ -3,6 +3,7 @@ import { Users, Mail, Package, MapPin, TrendingUp } from "lucide-react";
 import { useData } from "../context/PackageContext";
 import { useEffect, useState } from "react";
 import CountUp from "../components/ui/CountUp";
+import { useNavigate } from "react-router-dom";
 
 const barData = [
     { name: "Jan", enquiries: 40 },
@@ -16,16 +17,17 @@ const barData = [
 
 export default function Home() {
     const data = useData();
+    const navigate = useNavigate();
 
     const [stats, setStats] = useState([]);
 
     useEffect(
         () =>
             setStats([
-                { name: "Total Packages", stat: data?.packages.length, icon: Package, bgColor: "bg-blue-500", trend: "+2 this month" },
-                { name: "Total Destinations", stat: data?.destinations.length, icon: MapPin, bgColor: "bg-purple-500", trend: "Stable" },
-                { name: "Unique Visitors", stat: "2400", icon: Users, bgColor: "bg-green-500", trend: "+12% vs last month" },
-                { name: "New Enquiries", stat: data.pendingCount, icon: Mail, bgColor: "bg-orange-500", trend: "Needs attention" },
+                { id: 1, name: "Total Packages", stat: data?.packages.length, icon: Package, bgColor: "bg-blue-500/20", trend: "+2 this month" },
+                { id: 2, name: "Total Destinations", stat: data?.destinations.length, icon: MapPin, bgColor: "bg-purple-500/20", trend: "Stable" },
+                { id: 3, name: "Unique Visitors", stat: "542", icon: Users, bgColor: "bg-green-500/20", trend: "+12%" },
+                { id: 4, name: "New Enquiries", stat: data.pendingCount, icon: Mail, bgColor: "bg-orange-500/20", trend: "Attention" },
             ]),
         [data],
     );
@@ -37,24 +39,37 @@ export default function Home() {
                 <p className="mt-2 text-sm text-gray-500">Monitor your business metrics, enquiries, and package performance.</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
                 {stats.map((item) => (
                     <div
-                        key={item.name}
-                        className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 transition-all hover:shadow-md hover:-translate-y-1">
-                        <div className="flex items-center justify-between">
-                            <div className={`inline-flex rounded-xl p-3 ${item.bgColor} bg-opacity-10`}>
-                                <item.icon className={`h-6 w-6 ${item.bgColor.replace("bg-", "text-")}`} aria-hidden="true" />
-                            </div>
-                            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{item.trend}</span>
-                        </div>
-                        <div className="mt-4">
-                            <dt className="truncate text-sm font-medium text-gray-500">{item.name}</dt>
-                            <dd className="mt-1 flex items-baseline">
-                                <div className="text-3xl font-extrabold text-gray-900 tracking-tight">
-                                    <CountUp from={0} to={item.stat} separator="," direction="up" duration={1} className="count-up-text" delay={0} />
+                        key={item.id}
+                        onClick={() => item.id === 4 && navigate("/enquiries")}
+                        className="relative overflow-hidden rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-900/5 transition-all hover:shadow-md hover:-translate-y-1">
+                        <div className="flex items-center justify-between xl:relative">
+                            <div className="flex items-center gap-4">
+                                <div className={`inline-flex rounded-xl p-3 ${item.bgColor}`}>
+                                    <item.icon className={`h-6 w-6 ${item.bgColor.replace("bg-", "text-").replace("/20", "")}`} aria-hidden="true" />
                                 </div>
-                            </dd>
+                                <div className="flex flex-col">
+                                    <dt className="truncate text-sm font-medium text-gray-500">{item.name}</dt>
+                                    <dd className="flex items-baseline">
+                                        <div className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                                            <CountUp
+                                                from={0}
+                                                to={item.stat}
+                                                separator=","
+                                                direction="up"
+                                                duration={1}
+                                                className={`count-up-text text-slate-500`}
+                                                delay={0}
+                                            />
+                                        </div>
+                                    </dd>
+                                </div>
+                            </div>
+                            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-full xl:absolute right-0 bottom-0">
+                                {item.trend}
+                            </span>
                         </div>
                     </div>
                 ))}

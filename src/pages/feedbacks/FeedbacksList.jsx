@@ -1,45 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, X, Star, MessageSquareHeart, Calendar, Package as PackageIcon, User } from "lucide-react";
+import { Plus, X, Star, MessageSquareHeart, Calendar, Package as PackageIcon, User, RotateCcw } from "lucide-react";
 import { getFeedbacks } from "../../services/feedback.services";
 import { formatDateAndTime } from "../../utils/date";
 import Spinner from "../../components/ui/Spinner";
 
-const mockFeedbacks = [
-    {
-        id: "1",
-        name: "John Doe",
-        package: "Goa Holiday",
-        overallRating: 5,
-        review: "Amazing experience! Highly recommended.",
-        createdAt: "2023-10-01",
-    },
-    {
-        id: "2",
-        name: "Jane Smith",
-        package: "Kashmir Paradise",
-        overallRating: 4,
-        review: "Great trip, but food could be better.",
-        createdAt: "2023-10-05",
-    },
-];
-
 export default function FeedbacksList() {
     const [feedbacks, setFeedbacks] = useState([]);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
-    const [loading, setaLoading] = useState(false);
-    useEffect(() => {
-        const fetchfeedbacks = async () => {
-            setaLoading(true);
-            try {
-                const data = await getFeedbacks();
-                setFeedbacks(data.feedbacks);
-            } catch (error) {
-                console.error(error.message);
-            }
-            setaLoading(false);
-        };
+    const [loading, setLoading] = useState(false);
 
+    const fetchfeedbacks = async () => {
+        setFeedbacks([]);
+        setLoading(true);
+        try {
+            const data = await getFeedbacks();
+            setFeedbacks(data.feedbacks);
+        } catch (error) {
+            console.error(error.message);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
         fetchfeedbacks();
     }, []);
 
@@ -59,38 +42,44 @@ export default function FeedbacksList() {
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <Link
                         to="/feedbacks/new"
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all hover:shadow-md">
                         <Plus className="h-4 w-4" />
                         Generate Feedback Link
                     </Link>
                 </div>
             </div>
 
+            <div className="flex justify-end-safe px-3">
+                <button className="flex gap-1 items-center text-blue-500 hover:text-blue-600 cursor-pointer" onClick={() => fetchfeedbacks()}>
+                    Refresh <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+            </div>
+
             <div className="mt-6 overflow-hidden shadow-sm ring-1 ring-gray-900/5 rounded-xl bg-white">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50/50">
                         <tr>
-                            <th className="py-4 pl-4 pr-3 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                            <th className="py-4 pl-4 pr-3 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
                                 Customer
                             </th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Package</th>
-                            <th className="px-3 py-4 text-left text-sm font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
+                            <th className="px-3 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">Package</th>
+                            <th className="px-3 py-4 text-left text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
                         {feedbacks.map((fb) => (
                             <tr key={fb._id} onClick={() => setSelectedFeedback(fb)} className="cursor-pointer hover:bg-gray-50/80 transition-colors">
-                                <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-6">
+                                <td className="whitespace-nowrap py-5 pl-4 pr-3 text-xs md:text-sm sm:pl-6">
                                     <div className="flex items-center">
                                         <div>
                                             <div className="font-semibold text-gray-900">{fb.name}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-600 font-medium">
+                                <td className="whitespace-nowrap px-3 py-5 text-xs md:text-sm text-gray-600 font-medium">
                                     <div className="flex items-center gap-1.5 text-wrap">{fb.package || "N/A"}</div>
                                 </td>
-                                <td className="whitespace-nowrap px-3 py-5 text-sm font-semibold text-gray-700">
+                                <td className="whitespace-nowrap px-3 py-5 text-xs md:text-sm font-semibold text-gray-700">
                                     <div className="flex items-center gap-1">
                                         {fb.overallRating}
                                         <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
@@ -101,13 +90,13 @@ export default function FeedbacksList() {
                         {feedbacks.length === 0 &&
                             (loading ? (
                                 <tr>
-                                    <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+                                    <td colSpan="4" className="py-12 text-center text-xs md:text-sm text-gray-500">
                                         <Spinner />
                                     </td>
                                 </tr>
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="py-12 text-center text-sm text-gray-500">
+                                    <td colSpan="4" className="py-12 text-center text-xs md:text-sm text-gray-500">
                                         No feedbacks received yet.
                                     </td>
                                 </tr>

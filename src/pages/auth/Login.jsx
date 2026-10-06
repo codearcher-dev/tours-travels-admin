@@ -21,8 +21,10 @@ export default function Login() {
             return;
         }
 
+        const fcmToken = localStorage.getItem("deviceToken");
+
         try {
-            const data = await login({ email, password });
+            const data = await login({ email, password, fcmToken });
             setUser(data.user);
             toast.success(data.message);
             navigate("/");
